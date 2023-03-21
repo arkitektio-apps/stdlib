@@ -1,0 +1,6 @@
+author: jhnnsrs
+entrypoint: app
+identifier: stdlib
+scopes:
+- read
+version: dev
