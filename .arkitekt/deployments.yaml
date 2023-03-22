@@ -1,0 +1,688 @@
+deployments:
+- builder: arkitekt.builder.port
+  definitions:
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The to be converted Image
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      default: true
+      description: SHould we rescale the image to fit its dynamic range?. Defaults
+        to True.
+      key: rescale
+      kind: BOOL
+      nullable: false
+    - annotations: []
+      default: true
+      description: Automatically z-project if stack. Defaults to True.
+      key: max
+      kind: BOOL
+      nullable: false
+    - annotations: []
+      assign_widget:
+        choices:
+        - label: VIRIDIS
+          value: VIRIDIS
+        - label: PLASMA
+          value: PLASMA
+        kind: ChoiceWidget
+      default: VIRIDIS
+      description: '(Colormap, optional): The colormap to use. Defaults to Colormap.VIRIDIS.'
+      identifier: cls/colormap
+      key: cm
+      kind: STRUCTURE
+      nullable: false
+      return_widget:
+        choices:
+        - label: VIRIDIS
+          value: VIRIDIS
+        - label: PLASMA
+          value: PLASMA
+        kind: ChoiceReturnWidget
+    description: Generates THumbnail for the Image
+    interface: array_to_image
+    interfaces: []
+    kind: FUNCTION
+    name: Thumbnail Image
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_thumbnails($search: String, $values: [ID]) {\n  options:\
+          \ thumbnails(name: $search, limit: 20, ids: $values) {\n    value: id\n\
+          \    label: image\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/thumbnail'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The image
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      default: max
+      description: The key to use for the metric. Defaults to "max".
+      key: key
+      kind: STRING
+      nullable: false
+    description: Measures the maxium value of an image
+    interface: measure_max
+    interfaces: []
+    kind: FUNCTION
+    name: Measure Max
+    returns:
+    - annotations: []
+      identifier: '@mikro/metric'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The image
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      default: Sum
+      description: The key to use for the metric. Defaults to "max".
+      key: key
+      kind: STRING
+      nullable: false
+    description: Measures the sum of all values of an image
+    interface: measure_sum
+    interfaces: []
+    kind: FUNCTION
+    name: Measure Sum
+    returns:
+    - annotations: []
+      identifier: '@mikro/metric'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The image
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      default: Fraction
+      description: The key to use for the metric. Defaults to "max".
+      key: key
+      kind: STRING
+      nullable: false
+    - annotations: []
+      default: 1
+      key: value
+      kind: INT
+      nullable: false
+    description: Measures the appearance of this value in the image (0-1)
+    interface: measure_fraction
+    interfaces: []
+    kind: FUNCTION
+    name: Measure Fraction
+    returns:
+    - annotations: []
+      identifier: '@mikro/metric'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The image
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    description: Measures basic meffffftrics of an image like max, mifffffn, mean
+    interface: measure_basics
+    interfaces: []
+    kind: FUNCTION
+    name: Measure Basic Metrics
+    returns:
+    - annotations: []
+      child:
+        identifier: '@mikro/metric'
+        kind: STRUCTURE
+        nullable: false
+      key: return0
+      kind: LIST
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The Representation
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      default: 1
+      key: interval
+      kind: INT
+      nullable: false
+    - annotations: []
+      default: frame
+      key: key
+      kind: STRING
+      nullable: false
+    description: Converts a time series to a single frame
+    interface: t_to_frame
+    interfaces: []
+    kind: GENERATOR
+    name: T to Frame
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_rois($search: String, $values: [ID]) {\n  options: rois(repname:\
+          \ $search, ids: $values) {\n    label: id\n    value: id\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/roi'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The Representation
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      default: 1
+      key: interval
+      kind: INT
+      nullable: false
+    - annotations: []
+      default: Slice
+      key: key
+      kind: STRING
+      nullable: false
+    description: Creates a slice roi for each z slice
+    interface: z_to_slice
+    interfaces: []
+    kind: GENERATOR
+    name: Z to Slice
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_rois($search: String, $values: [ID]) {\n  options: rois(repname:\
+          \ $search, ids: $values) {\n    label: id\n    value: id\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/roi'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_rois($search: String, $values: [ID]) {\n  options: rois(repname:\
+          \ $search, ids: $values) {\n    label: id\n    value: id\n  }\n}"
+        ward: mikro
+      description: The Omero File
+      identifier: '@mikro/roi'
+      key: roi
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The Representation to be cropped. Defaults to the one of the ROI.
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: true
+    description: Crops an Image based on a ROI
+    interface: crop_image
+    interfaces: []
+    kind: FUNCTION
+    name: Crop Image
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/representation'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The Image where we should count cells
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      default: 2
+      key: factor
+      kind: INT
+      nullable: false
+    - annotations: []
+      default: 0
+      key: depth
+      kind: INT
+      nullable: false
+    - annotations: []
+      assign_widget:
+        choices:
+        - label: MEAN
+          value: MEAN
+        - label: MAX
+          value: MAX
+        - label: MIN
+          value: MIN
+        - label: MEDIAN
+          value: MEDIAN
+        kind: ChoiceWidget
+      default: MEAN
+      identifier: cls/downscalemethod
+      key: method
+      kind: STRUCTURE
+      nullable: false
+      return_widget:
+        choices:
+        - label: MEAN
+          value: MEAN
+        - label: MAX
+          value: MAX
+        - label: MIN
+          value: MIN
+        - label: MEDIAN
+          value: MEDIAN
+        kind: ChoiceReturnWidget
+    description: Scales down the Representatoi by the factor of the provided
+    interface: downscale_image
+    interfaces: []
+    kind: FUNCTION
+    name: Downscale
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/representation'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The Image where we should count cells
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      default: 0.5
+      key: threshold
+      kind: FLOAT
+      nullable: false
+    - annotations: []
+      assign_widget:
+        choices:
+        - label: MEAN
+          value: MEAN
+        - label: MAX
+          value: MAX
+        - label: MIN
+          value: MIN
+        kind: ChoiceWidget
+      default: MEAN
+      identifier: cls/thresholdmethod
+      key: method
+      kind: STRUCTURE
+      nullable: false
+      return_widget:
+        choices:
+        - label: MEAN
+          value: MEAN
+        - label: MAX
+          value: MAX
+        - label: MIN
+          value: MIN
+        kind: ChoiceReturnWidget
+    description: Binarizes the image based on a threshold
+    interface: threshold_image
+    interfaces: []
+    kind: FUNCTION
+    name: Binarize
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/representation'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The Image where we should count cells
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    description: Projects the image onto the maximum intensity along the z axis
+    interface: maximum_intensity_projection
+    interfaces: []
+    kind: FUNCTION
+    name: Maximum Intensity Projection
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/representation'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The Image where we should count cells
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      assign_widget:
+        choices:
+        - label: NORM_INF
+          value: NORM_INF
+        - label: NORM_L1
+          value: NORM_L1
+        - label: NORM_L2
+          value: NORM_L2
+        - label: NORM_MINMAX
+          value: NORM_MINMAX
+        - label: NORM_RELATIVE
+          value: NORM_RELATIVE
+        - label: NORM_TYPE_MASK
+          value: NORM_TYPE_MASK
+        kind: ChoiceWidget
+      default: NORM_MINMAX
+      identifier: cls/cv2normtypes
+      key: normtype
+      kind: STRUCTURE
+      nullable: false
+      return_widget:
+        choices:
+        - label: NORM_INF
+          value: NORM_INF
+        - label: NORM_L1
+          value: NORM_L1
+        - label: NORM_L2
+          value: NORM_L2
+        - label: NORM_MINMAX
+          value: NORM_MINMAX
+        - label: NORM_RELATIVE
+          value: NORM_RELATIVE
+        - label: NORM_TYPE_MASK
+          value: NORM_TYPE_MASK
+        kind: ChoiceReturnWidget
+    description: Binarizes the image based on a threshold
+    interface: adaptive_threshold_image
+    interfaces: []
+    kind: FUNCTION
+    name: Adaptive Binarize
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/representation'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      description: The Image where we should count cells
+      identifier: '@mikro/representation'
+      key: rep
+      kind: STRUCTURE
+      nullable: false
+    - annotations: []
+      default: false
+      key: gaussian_blur
+      kind: BOOL
+      nullable: false
+    description: Binarizes the image based on a threshold
+    interface: otsu_thresholding
+    interfaces: []
+    kind: FUNCTION
+    name: Otsu Thresholding
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_representation($search: String, $values: [ID]) {\n  options:\
+          \ representations(name: $search, limit: 20, ids: $values) {\n    value:\
+          \ id\n    label: name\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/representation'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_rois($search: String, $values: [ID]) {\n  options: rois(repname:\
+          \ $search, ids: $values) {\n    label: id\n    value: id\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/roi'
+      key: roi
+      kind: STRUCTURE
+      nullable: false
+    description: Transforms a ROI into a Position on the governing stage
+    interface: roi_to_position
+    interfaces: []
+    kind: FUNCTION
+    name: Roi to Position
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_positions($search: String, $values: [ID], $stage: ID)\
+          \ {\n  options: positions(name: $search, limit: 30, stage: $stage, ids:\
+          \ $values) {\n    value: id\n    label: name\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/position'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      key: name
+      kind: STRING
+      nullable: false
+    description: Creates a new stage with the given name
+    interface: create_stage_from_name
+    interfaces: []
+    kind: FUNCTION
+    name: Create New Stage
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_stages($search: String, $values: [ID]) {\n  options:\
+          \ stages(name: $search, limit: 30, ids: $values) {\n    value: id\n    label:\
+          \ name\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/stage'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      child:
+        assign_widget:
+          kind: SearchWidget
+          query: "query search_positions($search: String, $values: [ID], $stage: ID)\
+            \ {\n  options: positions(name: $search, limit: 30, stage: $stage, ids:\
+            \ $values) {\n    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        identifier: '@mikro/position'
+        kind: STRUCTURE
+        nullable: false
+      key: name
+      kind: LIST
+      nullable: false
+    description: Creates a new stage with the given name
+    interface: merge_positions_to_stage
+    interfaces: []
+    kind: FUNCTION
+    name: Merge positions to stage
+    returns:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_stages($search: String, $values: [ID]) {\n  options:\
+          \ stages(name: $search, limit: 30, ids: $values) {\n    value: id\n    label:\
+          \ name\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/stage'
+      key: return0
+      kind: STRUCTURE
+      nullable: false
+  - args:
+    - annotations: []
+      assign_widget:
+        kind: SearchWidget
+        query: "query search_datasets($search: String, $values: [ID]) {\n  options:\
+          \ datasets(name: $search, limit: 30, ids: $values) {\n    value: id\n  \
+          \  label: name\n  }\n}"
+        ward: mikro
+      identifier: '@mikro/dataset'
+      key: dataset
+      kind: STRUCTURE
+      nullable: false
+    description: Gets the files in an dataset at the time of the request
+    interface: get_files_ff
+    interfaces: []
+    kind: FUNCTION
+    name: Get all Omerfiles in Dataset
+    returns:
+    - annotations: []
+      child:
+        assign_widget:
+          kind: SearchWidget
+          query: "query search_omerofile($search: String, $values: [ID]) {\n  options:\
+            \ omerofiles(name: $search, ids: $values) {\n    value: id\n    label:\
+            \ name\n  }\n}"
+          ward: mikro
+        identifier: '@mikro/omerofile'
+        kind: STRUCTURE
+        nullable: false
+      key: return0
+      kind: LIST
+      nullable: false
+  deployed:
+    docker: jhnnsrs/stdlib:one
+    runtime: standard
+  deployer: arkitekt.deployers.port.dockerbuild
+  identifier: stdlib
+  scopes:
+  - read
+  version: one
