@@ -9,3 +9,14 @@ deployments:
   scopes:
   - read
   version: '3'
+- builder: arkitekt.builder.port
+  definitions: []
+  deployed:
+    docker: jhnnsrs/stdlib:two
+    runtime: standard
+  deployer: arkitekt.deployers.port.dockerbuild
+  identifier: stdlib
+  scopes:
+  - read
+  version: two
+latest_deployment: '2023-03-23T05:02:22.021265'

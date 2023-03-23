@@ -421,6 +421,51 @@ def downscale_image(
     )
 
 
+@register()
+def scale_dimensions(
+    rep: RepresentationFragment,
+    factor_x: int = 2,
+    factor_y: int = 2,
+    factor_z: int = 2,
+    factor_t: int = 1,
+    factor_c: int = 1,
+    method: DownScaleMethod = DownScaleMethod.MEAN,
+) -> RepresentationFragment:
+    """Rescale Dimensions
+
+    Rescale the dimensions by the factors provided
+
+    Args:
+        rep (RepresentationFragment): The Image we should rescale
+
+    Returns:
+        RepresentationFragment: The Rescaled image
+    """
+
+    scale_map = {
+        "x": factor_x,
+        "y": factor_y,
+        "z": factor_z,
+        "t": factor_t,
+        "c": factor_c,
+    }
+
+    squeezed_data = rep.data.squeeze()
+    dims = squeezed_data.dims
+
+    s = [scale_map[d] for d in dims]
+
+    newrep = multiscale(rep.data.squeeze(), windowed_mean, s)
+
+    return from_xarray(
+        newrep[1],
+        name=f"Downscaled {rep.name}",
+        tags=[f"scale-{key}-{factor}" for key, factor in scale_map.items()],
+        variety=RepresentationVariety.VOXEL,
+        origins=[rep],
+    )
+
+
 class ThresholdMethod(Enum):
     MEAN = "mean"
     MAX = "max"
