@@ -37,7 +37,7 @@ from mikro.api.schema import (
 )
 from arkitekt import register, log
 from functools import partial
-
+from skimage import transform
 
 class Colormap(Enum):
     VIRIDIS = partial(cm.viridis)  # partial needed to make it register as an enum value
@@ -422,16 +422,17 @@ def downscale_image(
 
 
 @register()
-def scale_dimensions(
+def rescale(
     rep: RepresentationFragment,
-    factor_x: int = 2,
-    factor_y: int = 2,
-    factor_z: int = 2,
-    factor_t: int = 1,
-    factor_c: int = 1,
+    factor_x: float = 2.,
+    factor_y: float = 2.,
+    factor_z: float = 2.,
+    factor_t: float = 1.,
+    factor_c: float = 1.,
+    anti_alias: bool = True,
     method: DownScaleMethod = DownScaleMethod.MEAN,
 ) -> RepresentationFragment:
-    """Rescale Dimensions
+    """Rescale
 
     Rescale the dimensions by the factors provided
 
@@ -453,13 +454,14 @@ def scale_dimensions(
     squeezed_data = rep.data.squeeze()
     dims = squeezed_data.dims
 
-    s = [scale_map[d] for d in dims]
 
-    newrep = multiscale(rep.data.squeeze(), windowed_mean, s)
+    s = tuple([scale_map[d] for d in dims])
+
+    newrep = transform.rescale(squeezed_data.data, s, anti_aliasing=anti_alias)
 
     return from_xarray(
-        newrep[1],
-        name=f"Downscaled {rep.name}",
+        xr.DataArray(newrep, dims=dims),
+        name=f"Rescaled {rep.name}",
         tags=[f"scale-{key}-{factor}" for key, factor in scale_map.items()],
         variety=RepresentationVariety.VOXEL,
         origins=[rep],
