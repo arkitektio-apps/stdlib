@@ -1,6 +1,7 @@
 author: jhnnsrs
 entrypoint: app
 identifier: stdlib
+requirements: []
 scopes:
 - read
 version: dev

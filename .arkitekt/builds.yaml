@@ -1,0 +1,22 @@
+builds:
+- build_id: 6c7ee71b-df62-4ff1-9a4e-c563df8085b6
+  builder: port
+  manifest:
+    author: jhnnsrs
+    entrypoint: app
+    identifier: stdlib
+    requirements: []
+    scopes:
+    - read
+    version: dev
+latest_build:
+  build_id: 6c7ee71b-df62-4ff1-9a4e-c563df8085b6
+  builder: port
+  manifest:
+    author: jhnnsrs
+    entrypoint: app
+    identifier: stdlib
+    requirements: []
+    scopes:
+    - read
+    version: dev
