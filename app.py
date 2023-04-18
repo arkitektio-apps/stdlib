@@ -503,7 +503,7 @@ def resize(
 
     s = tuple([scale_map[d] for d in dims])
 
-    newrep = transform.resize(squeezed_data.data, s, anti_aliasing=anti_alias)
+    newrep = transform.resize(squeezed_data.data, s, anti_aliasing=anti_alias, preserve_range=True)
 
     return from_xarray(
         xr.DataArray(newrep, dims=dims),
