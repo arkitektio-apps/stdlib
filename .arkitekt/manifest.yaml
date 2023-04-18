@@ -4,4 +4,4 @@ identifier: stdlib
 requirements: []
 scopes:
 - read
-version: dev
+version: 0.0.1

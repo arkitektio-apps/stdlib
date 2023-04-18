@@ -468,6 +468,52 @@ def rescale(
     )
 
 
+@register()
+def resize(
+    rep: RepresentationFragment,
+    dim_x: Optional[int],
+    dim_y: Optional[int],
+    dim_z: Optional[int],
+    dim_t: Optional[int],
+    dim_c: Optional[int],
+    anti_alias: bool = True,
+) -> RepresentationFragment:
+    """Resize
+
+    Resize the image to the dimensions provided
+
+    Args:
+        rep (RepresentationFragment): The Image we should resized
+
+    Returns:
+        RepresentationFragment: The resized image
+    """
+
+    scale_map = {
+        "x": dim_x or rep.data.sizes["x"],
+        "y": dim_y or rep.data.sizes["y"],
+        "z": dim_z or rep.data.sizes["z"],
+        "t": dim_t or rep.data.sizes["t"],
+        "c": dim_c or rep.data.sizes["c"],
+    }
+
+    squeezed_data = rep.data.squeeze()
+    dims = squeezed_data.dims
+
+
+    s = tuple([scale_map[d] for d in dims])
+
+    newrep = transform.resize(squeezed_data.data, s, anti_aliasing=anti_alias)
+
+    return from_xarray(
+        xr.DataArray(newrep, dims=dims),
+        name=f"Resized {rep.name}",
+        tags=[f"resize-{key}-{factor}" for key, factor in scale_map.items()],
+        variety=RepresentationVariety.VOXEL,
+        origins=[rep],
+    )
+
+
 class ThresholdMethod(Enum):
     MEAN = "mean"
     MAX = "max"
