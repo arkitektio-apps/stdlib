@@ -38,7 +38,7 @@ from mikro.api.schema import (
 from arkitekt import register, log
 from functools import partial
 from skimage import transform
-
+from api.mikro import get_filedataset
 class Colormap(Enum):
     VIRIDIS = partial(cm.viridis)  # partial needed to make it register as an enum value
     PLASMA = partial(cm.plasma)
@@ -175,6 +175,24 @@ def measure_max(
         key=key, value=float(rep.data.max().compute()), representation=rep
     )
 
+
+
+@register()
+def iterate_images(
+    dataset: DatasetFragment,
+) -> RepresentationFragment:
+    """Iterate Images
+
+    Iterate over all images in a dataset
+
+    Args:
+        rep (Dataset): The dataset
+
+    yields:
+        Representation: The image
+    """
+    for x in get_filedataset(dataset).representations:
+        yield x
 
 @register()
 def measure_sum(

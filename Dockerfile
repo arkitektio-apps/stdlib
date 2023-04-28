@@ -10,10 +10,11 @@ COPY requirements.txt /tmp/requirements.txt
 
 # Install requirements
 RUN pip install -r /tmp/requirements.txt
-RUN pip install "arkitekt[cli]==0.4.86"
+RUN pip install "arkitekt[cli]==0.4.96"
 # Copy source code
 COPY app.py /app/app.py
 COPY .arkitekt /app/.arkitekt
+COPY api /app/api
 
 # Set working directory
 WORKDIR /app

@@ -1,0 +1,13 @@
+fragment FileDataset on Dataset {
+  name
+  representations {
+    id
+    name
+  }
+}
+
+query get_filedataset($id: ID!) {
+  dataset(id: $id) {
+    ...FileDataset
+  }
+}
