@@ -109,8 +109,7 @@ builds:
     scopes:
     - read
     version: 0.0.6
-latest_build:
-  build_id: d5ed8694-6a53-4fa0-a7c7-1ff8b48e1e79
+- build_id: 92658fef-b5cf-49fa-a0d1-0dc6c0c587dc
   builder: port
   manifest:
     author: jhnnsrs
@@ -119,4 +118,15 @@ latest_build:
     requirements: []
     scopes:
     - read
-    version: 0.0.6
+    version: 0.0.7
+latest_build:
+  build_id: 92658fef-b5cf-49fa-a0d1-0dc6c0c587dc
+  builder: port
+  manifest:
+    author: jhnnsrs
+    entrypoint: app
+    identifier: stdlib
+    requirements: []
+    scopes:
+    - read
+    version: 0.0.7

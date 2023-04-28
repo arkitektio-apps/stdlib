@@ -65,4 +65,15 @@ deployments:
   scopes:
   - read
   version: 0.0.6
-latest_deployment: '2023-04-21T17:31:06.080618'
+- author: jhnnsrs
+  command: arkitekt run port
+  created_at: '2023-04-28T16:32:51.840597'
+  definitions: []
+  entrypoint: app
+  identifier: stdlib
+  image: jhnnsrs/stdlib:0.0.7
+  requirements: []
+  scopes:
+  - read
+  version: 0.0.7
+latest_deployment: '2023-04-28T16:33:15.055768'
