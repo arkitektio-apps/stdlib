@@ -33,12 +33,17 @@ from mikro.api.schema import (
     create_thumbnail,
     from_xarray,
     get_representation,
+    OmeroRepresentationInput,
+    PhysicalSizeInput,
     InputVector,
 )
-from arkitekt import register, log
+import operator
+from arkitekt import register, log, group
 from functools import partial
 from skimage import transform
 from api.mikro import get_filedataset
+
+
 class Colormap(Enum):
     VIRIDIS = partial(cm.viridis)  # partial needed to make it register as an enum value
     PLASMA = partial(cm.plasma)
@@ -176,7 +181,6 @@ def measure_max(
     )
 
 
-
 @register()
 def iterate_images(
     dataset: DatasetFragment,
@@ -193,6 +197,7 @@ def iterate_images(
     """
     for x in get_filedataset(dataset).representations:
         yield x
+
 
 @register()
 def measure_sum(
@@ -323,6 +328,13 @@ def z_to_slice(
             )
 
 
+def cropND(img, bounding):
+    start = tuple(map(lambda a, da: a // 2 - da // 2, img.shape, bounding))
+    end = tuple(map(operator.add, start, bounding))
+    slices = tuple(map(slice, start, end))
+    return img[slices]
+
+
 @register()
 def crop_image(
     roi: ROIFragment, rep: Optional[RepresentationFragment]
@@ -442,11 +454,11 @@ def downscale_image(
 @register()
 def rescale(
     rep: RepresentationFragment,
-    factor_x: float = 2.,
-    factor_y: float = 2.,
-    factor_z: float = 2.,
-    factor_t: float = 1.,
-    factor_c: float = 1.,
+    factor_x: float = 2.0,
+    factor_y: float = 2.0,
+    factor_z: float = 2.0,
+    factor_t: float = 1.0,
+    factor_c: float = 1.0,
     anti_alias: bool = True,
     method: DownScaleMethod = DownScaleMethod.MEAN,
 ) -> RepresentationFragment:
@@ -471,7 +483,6 @@ def rescale(
 
     squeezed_data = rep.data.squeeze()
     dims = squeezed_data.dims
-
 
     s = tuple([scale_map[d] for d in dims])
 
@@ -518,16 +529,128 @@ def resize(
     squeezed_data = rep.data.squeeze()
     dims = squeezed_data.dims
 
-
     s = tuple([scale_map[d] for d in dims])
 
-    newrep = transform.resize(squeezed_data.data, s, anti_aliasing=anti_alias, preserve_range=True)
+    newrep = transform.resize(
+        squeezed_data.data, s, anti_aliasing=anti_alias, preserve_range=True
+    )
 
     return from_xarray(
         xr.DataArray(newrep, dims=dims),
         name=f"Resized {rep.name}",
         tags=[f"resize-{key}-{factor}" for key, factor in scale_map.items()],
         variety=RepresentationVariety.VOXEL,
+        origins=[rep],
+    )
+
+
+class CropMethod(Enum):
+    CENTER = "mean"
+    TOP_LEFT = "top-left"
+    BOTTOM_RIGHT = "bottom-right"
+
+
+class ExpandMethod(Enum):
+    PAD_ZEROS = "zeros"
+
+
+@register(
+    groups={
+        "ensure_dim_x": ["advanded"],
+        "ensure_dim_y": ["advanded"],
+        "ensure_dim_z": ["advanded"],
+        "crop_method": ["advanded"],
+        "pad_method": ["advanded"],
+        "anti_alias": ["advanded"],
+    },
+    port_groups=[group(key="advanded", hidden=True)],
+)
+def resize_to_physical(
+    rep: RepresentationFragment,
+    rescale_x: Optional[float],
+    rescale_y: Optional[float],
+    rescale_z: Optional[float],
+    ensure_dim_x: Optional[int],
+    ensure_dim_y: Optional[int],
+    ensure_dim_z: Optional[int],
+    crop_method: CropMethod = CropMethod.CENTER,
+    pad_method: ExpandMethod = ExpandMethod.PAD_ZEROS,
+    anti_alias: bool = True,
+) -> RepresentationFragment:
+    """Resize to Physical
+
+    Resize the image to match the physical size of the dimensions,
+    if the physical size is not provided, it will be assumed to be 1.
+
+    Additional dimensions will be cropped or padded according to the
+    crop_method and pad_method if the ensure_dim is provided
+
+    Args:
+        rep (RepresentationFragment): The Image we should resized
+        rescale_x (Optional[float]): The physical size of the x dimension
+        rescale_y (Optional[float]): The physical size of the y dimension
+        rescale_z (Optional[float]): The physical size of the z dimension
+        ensure_dim_x (Optional[int]): The size of the x dimension
+        ensure_dim_y (Optional[int]): The size of the y dimension
+        ensure_dim_z (Optional[int]): The size of the z dimension
+        crop_method (CropMethod, optional): The method to crop the image. Defaults to crop center.
+        pad_method (ExpandMethod, optional): The method to pad the image. Defaults to expand with zeros.
+
+    Returns:
+        RepresentationFragment: The resized image
+    """
+    if not rep.omero or not rep.omero.physical_size:
+        raise ValueError("Input Image has no physical size provided")
+
+    originial_scale = rep.omero.physical_size
+    scale_map = {
+        "x": rescale_x / rep.omero.physical_size.x if rescale_x else 1,
+        "y": rescale_y / rep.omero.physical_size.y if rescale_y else 1,
+        "z": rescale_z / rep.omero.physical_size.z if rescale_z else 1,
+        "t": 1,
+        "c": 1,
+    }
+
+    squeezed_data = rep.data.squeeze()
+    dims = squeezed_data.dims
+
+    s = tuple([scale_map[d] for d in dims])
+
+    newrep = transform.rescale(
+        squeezed_data.data, s, anti_aliasing=anti_alias, preserve_range=True
+    )
+
+    new_array = xr.DataArray(newrep, dims=dims)
+
+    if ensure_dim_x or ensure_dim_y or ensure_dim_z:
+        print(newrep.shape)
+
+        size_map = {
+            "x": ensure_dim_x or newrep.shape[2],
+            "y": ensure_dim_y or newrep.shape[1],
+            "z": ensure_dim_z or newrep.shape[0],
+            "t": rep.data.sizes["t"],
+            "c": rep.data.sizes["c"],
+        }
+
+        s = tuple([size_map[d] for d in dims])
+        new_array = cropND(
+            new_array,
+            s,
+        )
+
+    return from_xarray(
+        new_array,
+        name=f"Resized {rep.name}",
+        tags=[f"resize-{key}-{factor}" for key, factor in scale_map.items()],
+        variety=RepresentationVariety.VOXEL,
+        omero=OmeroRepresentationInput(
+            physicalSize=PhysicalSizeInput(
+                x=rescale_x if rescale_x else originial_scale.x,
+                y=rescale_y if rescale_y else originial_scale.y,
+                z=rescale_z if rescale_z else originial_scale.z,
+            ),
+        ),
         origins=[rep],
     )
 
