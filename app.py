@@ -36,12 +36,15 @@ from mikro.api.schema import (
     OmeroRepresentationInput,
     PhysicalSizeInput,
     InputVector,
+    create_era,
+    EraFragment,
 )
 import operator
 from arkitekt import register, log, group
 from functools import partial
 from skimage import transform
 from api.mikro import get_filedataset
+import datetime
 
 
 class Colormap(Enum):
@@ -179,6 +182,20 @@ def measure_max(
     return create_metric(
         key=key, value=float(rep.data.max().compute()), representation=rep
     )
+
+
+@register()
+def create_era_func(
+    name: str = "max",
+) -> EraFragment:
+    """Create Era Now
+
+    Creates an era with the current time as a starttime
+
+    Returns:
+        Representation: The Back
+    """
+    return create_era(name=name, start=datetime.datetime.now())
 
 
 @register()
