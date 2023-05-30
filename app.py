@@ -1,5 +1,5 @@
 from functools import reduce
-import logging
+
 import math
 import os
 import uuid
@@ -10,7 +10,6 @@ import xarray as xr
 from colorthief import ColorThief
 from matplotlib import cm
 from PIL import Image
-from rich.logging import RichHandler
 from xarray_multiscale import multiscale
 from xarray_multiscale.reducers import windowed_mean
 import cv2
@@ -45,6 +44,7 @@ from functools import partial
 from skimage import transform
 from api.mikro import get_filedataset
 import datetime
+from typing import Tuple
 
 
 class Colormap(Enum):
@@ -860,7 +860,7 @@ def roi_to_position(
 
     smart_image = get_representation(roi.representation)
 
-    while smart_image.omero is None or smart_image.omero.position is None:
+    while smart_image.omero is None or smart_image.omero.positions is None:
         smart_image = get_representation(smart_image.origins[0])
         assert (
             smart_image.shape == roi.representation.shape
@@ -869,10 +869,10 @@ def roi_to_position(
     omero = smart_image.omero
     affine_transformation = omero.affine_transformation
     shape = smart_image.shape
-    position = smart_image.omero.position
+    position = smart_image.omero.positions[0]
 
     # calculate offset between center of roi and center of image
-    print(omero.position)
+    print(position)
     print(roi.get_vector_data(dims="ctzyx"))
     center = roi.center_as_array()
     print(center)
@@ -891,7 +891,7 @@ def roi_to_position(
     vec_center = np.array([x_from_center, y_from_center, z_from_center])
     vec = np.matmul(np.array(affine_transformation).reshape((3, 3)), vec_center)
     new_pos_x, new_pos_y, new_pos_z = (
-        np.array([omero.position.x, omero.position.y, omero.position.z]) + vec
+        np.array([position.x, position.y, position.z]) + vec
     )
 
     print(vec)
@@ -904,7 +904,75 @@ def roi_to_position(
         x=new_pos_x,
         y=new_pos_y,
         z=new_pos_z,
+        roi_origins=[roi],
     )
+
+
+@register()
+def roi_to_physical_dimensions(
+    roi: ROIFragment,
+) -> Tuple[float, float]:
+    """Rectangular Roi to Dimensions
+
+    Measures the size of a Rectangular Roi in microns
+    (only works for Rectangular ROIS)
+
+    Parameters
+    ----------
+    roi : ROIFragment
+        The roi to measure
+
+    Returns
+    -------
+    height: float
+        The height of the ROI in microns
+    width: float
+        The width of the ROI in microns
+    """
+    assert roi.type == ROIType.RECTANGLE, "Only works for rectangular ROIs"
+    smart_image = get_representation(roi.representation)
+
+    while smart_image.omero is None or smart_image.omero.physical_size is None:
+        smart_image = get_representation(smart_image.origins[0])
+        assert (
+            smart_image.shape == roi.representation.shape
+        ), "Could not find a matching position is not in the same space as the original (probably through a downsampling, or cropping)"
+
+    physical_size = smart_image.omero.physical_size
+
+    # Convert to a numpy array for easier manipulation
+    points = roi.get_vector_data(dims="yx")
+
+    # Find the minimum and maximum x and y coordinates
+    min_y, min_x = np.min(points, axis=0)
+    max_y, max_x = np.max(points, axis=0)
+
+    # Calculate the width and height
+    width = max_x - min_x
+    height = max_y - min_y
+
+    return width * physical_size.x, height * physical_size.y
+
+
+@register()
+def rois_to_positions(
+    roi: List[ROIFragment],
+) -> List[PositionFragment]:
+    """Rois to Positions
+
+    Transforms a List of Rois into a List of Positions on the governing stage
+
+    Args:
+        rep (RepresentationFragment): The Image where we should count cells
+
+    Returns:
+        List[PositionFragment]: The Downscaled image
+    """
+    positions = []
+    for r in roi:
+        positions.append(roi_to_position(r))
+
+    return positions
 
 
 @register()
