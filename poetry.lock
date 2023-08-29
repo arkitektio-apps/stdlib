@@ -207,14 +207,14 @@ trio = ["trio (<0.22)"]
 
 [[package]]
 name = "arkitekt"
-version = "0.5.22"
+version = "0.5.30"
 description = "client for the arkitekt platform"
 category = "main"
 optional = false
 python-versions = ">=3.8,<=3.12"
 files = [
-    {file = "arkitekt-0.5.22-py3-none-any.whl", hash = "sha256:ccdd02531b3c61adc4ef2eb782475c4c47478b5022ddc08df00dd4105da7e058"},
-    {file = "arkitekt-0.5.22.tar.gz", hash = "sha256:d464ba6341b19974e7a98eaa7b993f4c956714214fffb1eb21d9b40dd039c539"},
+    {file = "arkitekt-0.5.30-py3-none-any.whl", hash = "sha256:68bf5e3966eceac5aeef635856197aab97e509cdee1a5911a0893d8250a3eac9"},
+    {file = "arkitekt-0.5.30.tar.gz", hash = "sha256:b634a25ca1dcd3a6efc201b7339c3169afc66d6a891a5027f216718fbc70abd2"},
 ]
 
 [package.dependencies]
@@ -224,7 +224,7 @@ herre = ">=0.3.26"
 mikro = {version = ">=0.3.87", optional = true, markers = "extra == \"mikro\" or extra == \"all\""}
 mikro-next = {version = ">=0.1.2", optional = true, markers = "extra == \"mikro-next\" or extra == \"all\""}
 reaktion = {version = ">=0.1.16", optional = true, markers = "python_version >= \"3.9\" and python_version < \"4.0\" and extra == \"reaktion\" or python_version >= \"3.9\" and python_version < \"4.0\" and extra == \"all\""}
-rekuest = {version = ">=0.2.17", optional = true, markers = "extra == \"rekuest\" or extra == \"all\""}
+rekuest = {version = ">=0.2.18", optional = true, markers = "extra == \"rekuest\" or extra == \"all\""}
 rich-click = {version = ">=1.6.1,<2.0.0", optional = true, markers = "extra == \"cli\" or extra == \"all\""}
 semver = {version = ">=3.0.1,<4.0.0", optional = true, markers = "extra == \"cli\" or extra == \"all\""}
 turms = {version = ">=0.4.2", optional = true, markers = "python_version >= \"3.9\" and python_version < \"4.0\" and extra == \"cli\" or python_version >= \"3.9\" and python_version < \"4.0\" and extra == \"all\""}
@@ -232,13 +232,13 @@ unlok = {version = ">=0.1.18", optional = true, markers = "extra == \"unlok\" or
 watchfiles = {version = ">=0.18.1,<0.19.0", optional = true, markers = "extra == \"cli\" or extra == \"all\""}
 
 [package.extras]
-all = ["fluss (>=0.1.61)", "mikro (>=0.3.87)", "mikro-next (>=0.1.2)", "reaktion (>=0.1.16)", "rekuest (>=0.2.17)", "rich-click (>=1.6.1,<2.0.0)", "semver (>=3.0.1,<4.0.0)", "turms (>=0.4.2)", "unlok (>=0.1.18)", "watchfiles (>=0.18.1,<0.19.0)"]
+all = ["fluss (>=0.1.61)", "mikro (>=0.3.87)", "mikro-next (>=0.1.2)", "reaktion (>=0.1.16)", "rekuest (>=0.2.18)", "rich-click (>=1.6.1,<2.0.0)", "semver (>=3.0.1,<4.0.0)", "turms (>=0.4.2)", "unlok (>=0.1.18)", "watchfiles (>=0.18.1,<0.19.0)"]
 cli = ["rich-click (>=1.6.1,<2.0.0)", "semver (>=3.0.1,<4.0.0)", "turms (>=0.4.2)", "watchfiles (>=0.18.1,<0.19.0)"]
 fluss = ["fluss (>=0.1.61)"]
 mikro = ["mikro (>=0.3.87)"]
 mikro-next = ["mikro-next (>=0.1.2)"]
 reaktion = ["reaktion (>=0.1.16)"]
-rekuest = ["rekuest (>=0.2.17)"]
+rekuest = ["rekuest (>=0.2.18)"]
 unlok = ["unlok (>=0.1.18)"]
 
 [[package]]
@@ -1960,14 +1960,14 @@ rekuest = ">=0.2.9"
 
 [[package]]
 name = "rekuest"
-version = "0.2.17"
+version = "0.2.18"
 description = "rpc and node backbone"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "rekuest-0.2.17-py3-none-any.whl", hash = "sha256:6ab8cce645760888bcfa450603b0f75ea15f0bc22486ac18bee2ac98298129b8"},
-    {file = "rekuest-0.2.17.tar.gz", hash = "sha256:04e9134d14ed54bdfc2236c3ba45e15d841c572bcf69495bb1badf97d971d938"},
+    {file = "rekuest-0.2.18-py3-none-any.whl", hash = "sha256:20eb8b00ef206c6ae698f365d621686a2a84f6e8a7bfc476080ca98694cb04dc"},
+    {file = "rekuest-0.2.18.tar.gz", hash = "sha256:f2ea95fc22007035c526722dd77342c4b036e4ba94292d444b09a5c32eb0b77b"},
 ]
 
 [package.dependencies]
@@ -2669,4 +2669,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10,<=3.12"
-content-hash = "463623b89c4e3fe4b20c22a5bc7c418742bb2c9b66d725fbe7494d75c8c1d304"
+content-hash = "6c6533d0ab967dea6a591e013ec2ee6750be049a622d5024671f18dcd0c865c6"

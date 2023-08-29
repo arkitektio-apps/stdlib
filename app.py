@@ -81,6 +81,8 @@ def array_to_image(
 
     array = rep.data
 
+    cm = cm.value
+
     if "z" in array.dims:
         if not max:
             raise Exception("Set Max to Z true if you want to convert image stacks")
