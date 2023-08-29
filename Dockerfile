@@ -17,7 +17,11 @@ RUN poetry install
 
 
 # Set working directory
+COPY init.py /tmp
+WORKDIR /tmp
+RUN python init.py
+
+# Copy app
+COPY . /app
 WORKDIR /app
 
-# Run app on init to ensure dependencies are installed
-#RUN python app.py 

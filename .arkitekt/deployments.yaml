@@ -14,4 +14,19 @@ deployments:
     scopes:
     - read
     version: 0.2.5
-latest_deployment: '2023-08-29T11:50:37.672284'
+- build_id: ce6e3319-4d8a-4e1b-b1dd-149c8df72f00
+  builder: arkitekt.builders.port
+  definitions: []
+  deployed_at: '2023-08-29T12:44:22.563570'
+  deployment_id: f1840b91-7314-4fae-984e-7897fe1e80e7
+  image: jhnnsrs/stdlib:0.2.6
+  manifest:
+    author: jhnnsrs
+    created_at: '2023-08-29T12:44:09.845473'
+    entrypoint: app
+    identifier: stdlib
+    requirements: []
+    scopes:
+    - read
+    version: 0.2.6
+latest_deployment: '2023-08-29T12:44:22.564828'

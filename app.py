@@ -50,9 +50,6 @@ from skimage import transform
 from api.mikro import get_filedataset
 import datetime
 from typing import Tuple
-from skimage import data
-
-data.download_all()
 
 
 class Colormap(Enum):
