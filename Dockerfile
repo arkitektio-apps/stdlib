@@ -2,22 +2,22 @@ FROM python:3.10
 
 # Install dependencies
 RUN pip install --upgrade pip
-RUN pip install --upgrade setuptools
-RUN pip install --upgrade wheel
+# Install dependencies
+RUN pip install poetry rich
 
-# Copy requirements.txt
-COPY requirements.txt /tmp/requirements.txt
+# Configure poetry
+RUN poetry config virtualenvs.create false 
+ENV PYTHONUNBUFFERED=1
 
-# Install requirements
-RUN pip install -r /tmp/requirements.txt
-RUN pip install "arkitekt[cli]==0.4.124"
-# Copy source code
-COPY app.py /app/app.py
-COPY .arkitekt /app/.arkitekt
-COPY api /app/api
+
+# Copy dependencies
+COPY pyproject.toml /
+COPY poetry.lock /
+RUN poetry install
+
 
 # Set working directory
 WORKDIR /app
 
 # Run app on init to ensure dependencies are installed
-RUN python app.py 
+#RUN python app.py 

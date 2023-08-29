@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "stdlib"
+version = "0.1.0"
+description = ""
+authors = ["jhnnsrs <jhnnsrs@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10,<=3.12"
+arkitekt = { version = "0.5.22", extras = ["all"] }
+opencv-python-headless = "^4.8.0.76"
+colorthief = "^0.2.1"
+xarray-multiscale = "^2.1.0"
+matplotlib = "^3.7.2"
+scikit-image = "^0.21.0"
+pooch = "^1.7.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

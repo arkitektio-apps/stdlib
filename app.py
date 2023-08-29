@@ -30,8 +30,13 @@ from mikro.api.schema import (
     create_roi,
     create_stage,
     create_thumbnail,
+    create_channel,
     from_xarray,
     get_representation,
+    OmeroRepresentationInput,
+    PhysicalSizeInput,
+    AffineMatrix,
+    RepresentationViewInput,
     OmeroRepresentationInput,
     PhysicalSizeInput,
     InputVector,
@@ -45,6 +50,9 @@ from skimage import transform
 from api.mikro import get_filedataset
 import datetime
 from typing import Tuple
+from skimage import data
+
+data.download_all()
 
 
 class Colormap(Enum):
@@ -52,7 +60,7 @@ class Colormap(Enum):
     PLASMA = partial(cm.plasma)
 
 
-@register()
+@register(collections=["conversion", "rendering"])
 def array_to_image(
     rep: RepresentationFragment,
     rescale=True,
@@ -61,7 +69,7 @@ def array_to_image(
 ) -> ThumbnailFragment:
     """Thumbnail Image
 
-    Generates THumbnail for the Image
+    Generates Thumbnail for the Image
 
     Args:
         rep (Representation): The to be converted Image
@@ -163,7 +171,7 @@ def array_to_image(
     return th
 
 
-@register()
+@register(collections=["quantitative"])
 def measure_max(
     rep: RepresentationFragment,
     key: str = "max",
@@ -184,7 +192,7 @@ def measure_max(
     )
 
 
-@register()
+@register(collections=["creation"])
 def create_era_func(
     name: str = "max",
 ) -> EraFragment:
@@ -198,7 +206,7 @@ def create_era_func(
     return create_era(name=name, start=datetime.datetime.now())
 
 
-@register()
+@register(collections=["collection"])
 def iterate_images(
     dataset: DatasetFragment,
 ) -> RepresentationFragment:
@@ -216,7 +224,7 @@ def iterate_images(
         yield x
 
 
-@register()
+@register(collections=["quantitative"])
 def measure_sum(
     rep: RepresentationFragment,
     key: str = "Sum",
@@ -237,7 +245,7 @@ def measure_sum(
     )
 
 
-@register()
+@register(collections=["quantitative"])
 def measure_fraction(
     rep: RepresentationFragment,
     key: str = "Fraction",
@@ -261,7 +269,7 @@ def measure_fraction(
     return create_metric(key=key, value=float(sum / all_values), representation=rep)
 
 
-@register()
+@register(collections=["quantitative"])
 def measure_basics(
     rep: RepresentationFragment,
 ) -> List[MetricFragment]:
@@ -285,7 +293,7 @@ def measure_basics(
     ]
 
 
-@register()
+@register(collections=["conversion"])
 def t_to_frame(
     rep: RepresentationFragment,
     interval: int = 1,
@@ -315,7 +323,7 @@ def t_to_frame(
             )
 
 
-@register()
+@register(collections=["conversion"])
 def z_to_slice(
     rep: RepresentationFragment,
     interval: int = 1,
@@ -352,7 +360,7 @@ def cropND(img, bounding):
     return img[slices]
 
 
-@register()
+@register(collections=["conversion", "cropping"])
 def crop_image(
     roi: ROIFragment, rep: Optional[RepresentationFragment]
 ) -> RepresentationFragment:
@@ -438,7 +446,7 @@ class DownScaleMethod(Enum):
     MEDIAN = "median"
 
 
-@register()
+@register(collections=["processing", "scaling"])
 def downscale_image(
     rep: RepresentationFragment,
     factor: int = 2,
@@ -468,7 +476,7 @@ def downscale_image(
     )
 
 
-@register()
+@register(collections=["processing", "scaling"])
 def rescale(
     rep: RepresentationFragment,
     factor_x: float = 2.0,
@@ -514,7 +522,7 @@ def rescale(
     )
 
 
-@register()
+@register(collections=["processing", "scaling"])
 def resize(
     rep: RepresentationFragment,
     dim_x: Optional[int],
@@ -573,14 +581,15 @@ class ExpandMethod(Enum):
 
 @register(
     groups={
-        "ensure_dim_x": ["advanded"],
-        "ensure_dim_y": ["advanded"],
-        "ensure_dim_z": ["advanded"],
-        "crop_method": ["advanded"],
-        "pad_method": ["advanded"],
-        "anti_alias": ["advanded"],
+        "ensure_dim_x": ["advanced"],
+        "ensure_dim_y": ["advanced"],
+        "ensure_dim_z": ["advanced"],
+        "crop_method": ["advanced"],
+        "pad_method": ["advanced"],
+        "anti_alias": ["advanced"],
     },
-    port_groups=[group(key="advanded", hidden=True)],
+    port_groups=[group(key="advanced", hidden=True)],
+    collections=["processing", "scaling"],
 )
 def resize_to_physical(
     rep: RepresentationFragment,
@@ -678,7 +687,7 @@ class ThresholdMethod(Enum):
     MIN = "min"
 
 
-@register()
+@register(collections=["processing", "thresholding"])
 def threshold_image(
     rep: RepresentationFragment,
     threshold: float = 0.5,
@@ -713,7 +722,7 @@ def threshold_image(
     )
 
 
-@register()
+@register(collections=["processing", "projection"])
 def maximum_intensity_projection(
     rep: RepresentationFragment,
 ) -> RepresentationFragment:
@@ -747,7 +756,7 @@ class CV2NormTypes(Enum):
     NORM_TYPE_MASK = cv2.NORM_TYPE_MASK
 
 
-@register()
+@register(collections=["processing", "thresholding", "adaptive"])
 def adaptive_threshold_image(
     rep: RepresentationFragment,
     normtype: CV2NormTypes = CV2NormTypes.NORM_MINMAX,
@@ -798,7 +807,7 @@ class CV2NormTypes(Enum):
     NORM_TYPE_MASK = cv2.NORM_TYPE_MASK
 
 
-@register()
+@register(collections=["processing", "thresholding", "adaptive"])
 def otsu_thresholding(
     rep: RepresentationFragment,
     gaussian_blur: bool = False,
@@ -843,7 +852,7 @@ def otsu_thresholding(
     )
 
 
-@register()
+@register(collections=["conversion"])
 def roi_to_position(
     roi: ROIFragment,
 ) -> PositionFragment:
@@ -908,7 +917,7 @@ def roi_to_position(
     )
 
 
-@register()
+@register(collections=["conversion"])
 def roi_to_physical_dimensions(
     roi: ROIFragment,
 ) -> Tuple[float, float]:
@@ -954,7 +963,7 @@ def roi_to_physical_dimensions(
     return width * physical_size.x, height * physical_size.y
 
 
-@register()
+@register(collections=["conversion"])
 def rois_to_positions(
     roi: List[ROIFragment],
 ) -> List[PositionFragment]:
@@ -975,7 +984,7 @@ def rois_to_positions(
     return positions
 
 
-@register()
+@register(collections=["creation"])
 def create_stage_from_name(
     name: str,
 ) -> StageFragment:
@@ -988,7 +997,7 @@ def create_stage_from_name(
     return create_stage(name=name)
 
 
-@register()
+@register(collections=["conversion"])
 def merge_positions_to_stage(
     name: List[PositionFragment],
 ) -> StageFragment:
@@ -1005,7 +1014,7 @@ def merge_positions_to_stage(
     return s
 
 
-@register()
+@register(collections=["collection"])
 def get_files_ff(
     dataset: DatasetFragment,
 ) -> List[OmeroFileFragment]:
@@ -1016,3 +1025,200 @@ def get_files_ff(
     print(dataset.omerofiles)
 
     return [file for file in dataset.omerofiles if file is not None]
+
+
+class DataKind(Enum):
+    ASTRONAUT = partial(
+        data.astronaut
+    )  # partial needed to make it register as an enum value
+    BRAIN = partial(data.brain)
+    BRICK = partial(data.brick)
+    CAMERA = partial(data.camera)
+    CAT = partial(data.cat)
+    CELL = partial(data.cell)
+    CELLS_3D = partial(data.cells3d)
+    CHECKERBOARD = partial(data.checkerboard)
+    CHELSEA = partial(data.chelsea)
+    CLOCK = partial(data.clock)
+    COFFEE = partial(data.coffee)
+    COINS = partial(data.coins)
+    COLORWHEEL = partial(data.colorwheel)
+    EAGLE = partial(data.eagle)
+    GRASS = partial(data.grass)
+    GRAVEL = partial(data.gravel)
+    HORSE = partial(data.horse)
+    HUBBLE_DEEP_FIELD = partial(data.hubble_deep_field)
+    HUMAN_MITOSIS = partial(data.human_mitosis)
+    IMMUNOHISTOCHEMISTRY = partial(data.immunohistochemistry)
+    KIDNEY = partial(data.kidney)
+    LILY = partial(data.lily)
+    LOGO = partial(data.logo)
+    MICROANEURYSMS = partial(data.microaneurysms)
+    MOON = partial(data.moon)
+    NICKEL_SOLIDIFICATION = partial(data.nickel_solidification)
+    PAGE = partial(data.page)
+    PROTEIN_TRANSPORT = partial(data.protein_transport)
+    RETINA = partial(data.retina)
+    ROCKET = partial(data.rocket)
+    SHEPP_LOGAN_PHANTOM = partial(data.shepp_logan_phantom)
+    SKIN = partial(data.skin)
+    TEXT = partial(data.text)
+    VORTEX = partial(data.vortex)
+
+TWOD_DATA = set(
+    [
+        DataKind.BRICK,
+        DataKind.CAMERA,
+        DataKind.CELL,
+        DataKind.CLOCK,
+        DataKind.COINS,
+        DataKind.EAGLE,
+        DataKind.GRASS,
+        DataKind.GRAVEL,
+        DataKind.CHECKERBOARD,
+        DataKind.HORSE,
+        DataKind.HUMAN_MITOSIS,
+        DataKind.MICROANEURYSMS,
+        DataKind.MOON,
+        DataKind.PAGE,
+        DataKind.SHEPP_LOGAN_PHANTOM,
+        DataKind.TEXT,
+        DataKind.VORTEX,
+
+    ]
+)
+THREED_DATA = set(
+    [
+        DataKind.BRAIN,
+    ]
+)
+TWOD_D_RGB_DATA = set(
+    [
+        DataKind.ASTRONAUT,
+        DataKind.CAT,
+        DataKind.CHELSEA,
+        DataKind.COFFEE,
+        DataKind.COLORWHEEL,
+        DataKind.HUBBLE_DEEP_FIELD,
+        DataKind.IMMUNOHISTOCHEMISTRY,
+        DataKind.RETINA,
+        DataKind.ROCKET,
+        DataKind.SKIN,
+    ]
+)
+THREED_CHANNEL_DATA = set([DataKind.CELLS_3D])
+ZXYC_DATA = set([DataKind.KIDNEY])
+XYC_DATA = set([DataKind.LILY, DataKind.LOGO])
+TXY_DATA = set([DataKind.NICKEL_SOLIDIFICATION])
+TCXY_DATA = set([DataKind.PROTEIN_TRANSPORT])
+
+
+@register(collections=["generator"])
+def generate_test_image(
+    kind: DataKind, attach_meta: bool = True
+) -> RepresentationFragment:
+    """Generate Test Image"""
+
+    data = kind.value()
+    print(data.shape)
+
+    if kind in TWOD_DATA:
+        data = xr.DataArray(data, dims=["y", "x"])
+        variety = RepresentationVariety.VOXEL
+    elif kind in THREED_DATA:
+        data = xr.DataArray(data, dims=["z", "y", "x"])
+        variety = RepresentationVariety.VOXEL
+    elif kind in TWOD_D_RGB_DATA:
+        data = xr.DataArray(data, dims=["y", "x", "c"])
+        variety = RepresentationVariety.RGB
+    elif kind in THREED_CHANNEL_DATA:
+        data = xr.DataArray(data, dims=["z", "c", "y", "x"])
+        variety = RepresentationVariety.VOXEL
+    elif kind in ZXYC_DATA:
+        data = xr.DataArray(data, dims=["z", "x", "y", "c"])
+        variety = RepresentationVariety.VOXEL
+    elif kind in XYC_DATA:
+        data = xr.DataArray(data, dims=["x", "y", "c"])
+        variety = RepresentationVariety.VOXEL
+    elif kind in TXY_DATA:
+        data = xr.DataArray(data, dims=["t", "x", "y"])
+        variety = RepresentationVariety.VOXEL
+    elif kind in TCXY_DATA:
+        data = xr.DataArray(data, dims=["t", "c", "x", "y"])
+        variety = RepresentationVariety.VOXEL
+    else:
+        raise Exception("Unknown Data Kind")
+
+    omero = None
+    views = []
+
+    if attach_meta:
+        physical_size = None
+        if kind == DataKind.CELLS_3D:
+            nuclei_channel = create_channel(name="Nuclei")
+            cell_membrane_channel = create_channel(name="Cell Membrane")
+
+            physical_size = PhysicalSizeInput(x=0.29, y=0.29, z=0.29)
+
+            views.append(
+                RepresentationViewInput(
+                    cMin=0,
+                    cMax=0,
+                    channel=cell_membrane_channel,
+                )
+            )
+            views.append(
+                RepresentationViewInput(
+                    cMin=1,
+                    cMax=1,
+                    channel=nuclei_channel,
+                )
+            )
+
+        if kind == DataKind.CELL:
+            physical_size = PhysicalSizeInput(x=0.107, y=0.107)
+
+        if kind == DataKind.KIDNEY:
+            channel_1 = create_channel(name="Channel 1", emission_wavelength=450)
+            channel_2 = create_channel(name="Channel 2", emission_wavelength=515)
+            channel_3 = create_channel(name="Channel 3", emission_wavelength=605)
+
+            physical_size = PhysicalSizeInput(x=1.24, y=1.24, z=1.25)
+
+            views.append(
+                RepresentationViewInput(
+                    cMin=0,
+                    cMax=0,
+                    channel=channel_1,
+                )
+            )
+            views.append(
+                RepresentationViewInput(
+                    cMin=1,
+                    cMax=1,
+                    channel=channel_2,
+                )
+            )
+            views.append(
+                RepresentationViewInput(
+                    cMin=2,
+                    cMax=2,
+                    channel=channel_3,
+                )
+            )
+
+        if kind == DataKind.LILY:
+            physical_size = PhysicalSizeInput(x=1.24, y=1.24)
+
+
+
+        omero = OmeroRepresentationInput(physicalSize=physical_size)
+
+    return from_xarray(
+        data,
+        name=f"Test Image {kind.name}",
+        tags=[f"test-image-{kind.name}"],
+        variety=variety,
+        omero=omero,
+        views=views,
+    )
