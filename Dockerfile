@@ -12,14 +12,16 @@ ENV PYTHONUNBUFFERED=1
 
 # Copy dependencies
 COPY pyproject.toml /
-COPY poetry.lock /
 RUN poetry install
-
 
 # Set working directory
 COPY init.py /tmp
 WORKDIR /tmp
 RUN python init.py
+
+RUN pip install "arkitekt[all]==0.5.44"
+
+
 
 # Copy app
 COPY . /app

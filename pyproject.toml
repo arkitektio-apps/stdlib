@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10,<=3.12"
-arkitekt = { version = "0.5.30", extras = ["all"] }
+arkitekt = { version = "0.5.40", extras = ["all"] }
 opencv-python-headless = "^4.8.0.76"
 colorthief = "^0.2.1"
 xarray-multiscale = "^2.1.0"
