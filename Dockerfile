@@ -19,7 +19,7 @@ COPY init.py /tmp
 WORKDIR /tmp
 RUN python init.py
 
-RUN pip install "arkitekt[all]==0.5.44"
+RUN pip install "arkitekt[all]==0.5.45"
 
 
 

@@ -51,7 +51,7 @@ from api.mikro import get_filedataset
 import datetime
 from typing import Tuple
 from skimage import data
-
+import skimage
 
 class Colormap(Enum):
     VIRIDIS = partial(cm.viridis)  # partial needed to make it register as an enum value
@@ -560,6 +560,8 @@ def resize(
         squeezed_data.data, s, anti_aliasing=anti_alias, preserve_range=True
     )
 
+    newrep = skimage.util.img_as_uint(newrep)
+
     return from_xarray(
         xr.DataArray(newrep, dims=dims),
         name=f"Resized {rep.name}",
@@ -642,9 +644,16 @@ def resize_to_physical(
 
     s = tuple([scale_map[d] for d in dims])
 
-    newrep = transform.rescale(
-        squeezed_data.data, s, anti_aliasing=anti_alias, preserve_range=True
-    )
+    if not all([d == 1 for d in s]):
+        newrep = transform.rescale(
+            squeezed_data.data.compute(), s, anti_aliasing=anti_alias, preserve_range=True
+        )
+    else:
+        newrep = squeezed_data.data.compute()
+
+
+
+    newrep = skimage.util.img_as_uint(newrep)
 
     new_array = xr.DataArray(newrep, dims=dims)
 
@@ -736,7 +745,11 @@ def maximum_intensity_projection(
     Returns:
         RepresentationFragment: The Downscaled image
     """
-    m = rep.data.max(dim="z")
+    m = rep.uncached_data.max(dim="z").compute()
+
+    print("Maximum?")
+    print(m.max())
+    print(m.min())
 
     return from_xarray(
         m,
@@ -771,7 +784,7 @@ def adaptive_threshold_image(
     Returns:
         RepresentationFragment: The Downscaled image
     """
-    x = rep.data.compute()
+    x = rep.uncached_data.compute()
 
     thresholded = xr.DataArray(np.zeros_like(x), dims=x.dims, coords=x.coords)
 
@@ -822,26 +835,33 @@ def otsu_thresholding(
     Returns:
         RepresentationFragment: The Downscaled image
     """
-    x = rep.data.compute()
+    x = rep.uncached_data.compute()
 
-    thresholded = xr.DataArray(np.zeros_like(x), dims=x.dims, coords=x.coords)
+    thresholded = xr.DataArray(np.zeros_like(x, dtype=np.uint8), dims=x.dims, coords=x.coords)
+    print("Hallo")
+    print(x.min())
+    print(x.max())
 
     for c in range(x.sizes["c"]):
         for z in range(x.sizes["z"]):
             for t in range(x.sizes["t"]):
                 img = x.sel(c=c, z=z, t=t).data
+                img = skimage.img_as_ubyte(img)
+
                 if gaussian_blur:
                     img = cv2.GaussianBlur(img, (5, 5), 0)
-                normed = cv2.normalize(img, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
-                print(normed)
+                print(img)
                 threshold, image = cv2.threshold(
-                    normed,
+                    img,
                     0,
-                    1,
+                    255,
                     cv2.THRESH_BINARY + cv2.THRESH_OTSU,
                 )
                 print(image, threshold)
+                print(image.dtype)
                 thresholded[c, t, z, :, :] = image
+
+    print(thresholded.dtype)
 
     return from_xarray(
         thresholded,
