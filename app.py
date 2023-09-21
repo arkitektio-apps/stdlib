@@ -827,13 +827,16 @@ def otsu_thresholding(
 ) -> RepresentationFragment:
     """Otsu Thresholding
 
-    Binarizes the image based on a threshold
+    Binarizes the image based on a threshold, using Otsu's method
+    with option to guassian blur the image before, images are normalized
+    for each x,y slice before thresholding.
 
     Args:
-        rep (RepresentationFragment): The Image where we should count cells
+        rep (RepresentationFragment): The Image to be thresholded
+        gaussian_blur (bool): Whether to apply a gaussian blur before thresholding (kernel_size=5)
 
     Returns:
-        RepresentationFragment: The Downscaled image
+        RepresentationFragment: The thresholded image
     """
     x = rep.uncached_data.compute()
 
@@ -846,13 +849,18 @@ def otsu_thresholding(
         for z in range(x.sizes["z"]):
             for t in range(x.sizes["t"]):
                 img = x.sel(c=c, z=z, t=t).data
-                img = skimage.img_as_ubyte(img)
+                 # Find min and max values
+                min_val = np.min(img)
+                max_val = np.max(img)
+                
+                # Apply min-max normalization
+                normalized_arr = ((img - min_val) / (max_val - min_val) * 255).astype(np.uint8)
 
                 if gaussian_blur:
-                    img = cv2.GaussianBlur(img, (5, 5), 0)
+                    normalized_arr = cv2.GaussianBlur(img, (5, 5), 0)
                 print(img)
                 threshold, image = cv2.threshold(
-                    img,
+                    normalized_arr,
                     0,
                     255,
                     cv2.THRESH_BINARY + cv2.THRESH_OTSU,

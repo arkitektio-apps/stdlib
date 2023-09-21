@@ -119,4 +119,34 @@ deployments:
     scopes:
     - read
     version: 0.3.3
-latest_deployment: '2023-09-21T15:33:32.733361'
+- build_id: 7da55d0c-1a3c-4360-beb3-f099f61b0011
+  builder: arkitekt.builders.port
+  definitions: []
+  deployed_at: '2023-09-21T16:15:17.827749'
+  deployment_id: 0871b907-6be7-421b-afd4-dc9136ffe90e
+  image: jhnnsrs/stdlib:0.3.4
+  manifest:
+    author: jhnnsrs
+    created_at: '2023-09-21T16:15:09.135206'
+    entrypoint: app
+    identifier: stdlib
+    requirements: []
+    scopes:
+    - read
+    version: 0.3.4
+- build_id: a6fceb5e-ebc2-44d5-a7cd-9a7dd2526afc
+  builder: arkitekt.builders.port
+  definitions: []
+  deployed_at: '2023-09-21T16:18:42.600117'
+  deployment_id: b8a96da6-7107-42d3-99f2-3d028efbae28
+  image: jhnnsrs/stdlib:0.3.5
+  manifest:
+    author: jhnnsrs
+    created_at: '2023-09-21T16:18:34.030889'
+    entrypoint: app
+    identifier: stdlib
+    requirements: []
+    scopes:
+    - read
+    version: 0.3.5
+latest_deployment: '2023-09-21T16:18:42.609344'
