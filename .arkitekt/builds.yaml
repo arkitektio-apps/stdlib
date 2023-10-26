@@ -609,8 +609,7 @@ builds:
     scopes:
     - read
     version: 0.3.8
-latest_build:
-  build_id: 1c52bdae-d8c1-49b5-8fba-a18289fc3570
+- build_id: 331b8b05-fd77-49a4-81bc-76b693fe1716
   builder: arkitekt.builders.port
   manifest:
     author: jhnnsrs
@@ -619,4 +618,15 @@ latest_build:
     requirements: []
     scopes:
     - read
-    version: 0.3.8
+    version: 0.3.9
+latest_build:
+  build_id: 331b8b05-fd77-49a4-81bc-76b693fe1716
+  builder: arkitekt.builders.port
+  manifest:
+    author: jhnnsrs
+    entrypoint: app
+    identifier: stdlib
+    requirements: []
+    scopes:
+    - read
+    version: 0.3.9
