@@ -652,9 +652,6 @@ def resize_to_physical(
         newrep = squeezed_data.data.compute()
 
 
-
-    newrep = skimage.util.img_as_uint(newrep)
-
     new_array = xr.DataArray(newrep, dims=dims)
 
     if ensure_dim_x or ensure_dim_y or ensure_dim_z:
@@ -745,7 +742,7 @@ def maximum_intensity_projection(
     Returns:
         RepresentationFragment: The Downscaled image
     """
-    m = rep.uncached_data.max(dim="z").compute()
+    m = rep.data.max(dim="z").compute()
 
     print("Maximum?")
     print(m.max())
@@ -784,7 +781,7 @@ def adaptive_threshold_image(
     Returns:
         RepresentationFragment: The Downscaled image
     """
-    x = rep.uncached_data.compute()
+    x = rep.data.compute()
 
     thresholded = xr.DataArray(np.zeros_like(x), dims=x.dims, coords=x.coords)
 
@@ -838,7 +835,7 @@ def otsu_thresholding(
     Returns:
         RepresentationFragment: The thresholded image
     """
-    x = rep.uncached_data.compute()
+    x = rep.data.compute()
 
     thresholded = xr.DataArray(np.zeros_like(x, dtype=np.uint8), dims=x.dims, coords=x.coords)
     print("Hallo")
