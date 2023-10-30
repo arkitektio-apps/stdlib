@@ -52,6 +52,9 @@ import datetime
 from typing import Tuple
 from skimage import data
 import skimage
+from scipy import ndimage
+from sklearn.cluster import DBSCAN
+
 
 class Colormap(Enum):
     VIRIDIS = partial(cm.viridis)  # partial needed to make it register as an enum value
@@ -1247,3 +1250,99 @@ def generate_test_image(
         omero=omero,
         views=views,
     )
+
+
+@register(collections=["segmentation"])
+def mark_clusters_of_size_rectangle(
+    rep: RepresentationFragment,
+    distance: float,
+    min_size: int,
+    max_size: Optional[int],
+    c: Optional[int] = 0,
+    t: Optional[int] = 0,
+    z: Optional[int] = 0,
+    limit: Optional[int] = None,
+) -> List[ROIFragment]:
+    """Mark Clusters
+
+    Takes a masked image and marks rois based on dense clusters of a certain size 
+    and density of their center of mass
+
+    Args:
+        rep (RepresentationFragment): The image to label outliers for
+        distance (float): The distance between points in a cluster (eps in DBSCAN)
+        min_size (int): The minimum size of a cluster (min_samples in DBSCAN)
+        max_size (Optional[int]): The maximum size of a cluster (threshold for number of labels in a cluster)
+        c (Optional[int], optional): The channel to use. Defaults to 0.
+        t (Optional[int], optional): The timepoint to use. Defaults to 0.
+        z (Optional[int], optional): The z-slice to use. Defaults to 0.
+        limit (Optional[int], optional): The maximum number of clusters to return. Defaults to None.
+
+
+    Returns:
+        List[ROIFragment]: The rois for the clusters
+    """
+    assert (
+        rep.variety == RepresentationVariety.MASK
+    ), "Only mask representations are supported"
+
+    x = rep.data.sel(c=c, t=t, z=z).compute().data
+
+    # %%
+    centroids = ndimage.center_of_mass(x, x, range(1, x.max() + 1))
+    centroids = np.array(centroids)
+
+    dbscan = DBSCAN(eps=distance, min_samples=min_size).fit(centroids)
+    dblabels = dbscan.labels_
+    n_clusters_ = len(set(dblabels)) - (1 if -1 in dblabels else 0)
+    n_noise_ = list(dblabels).count(-1)
+
+    log(f"Estimated number of clusters: {n_clusters_}")
+    log(f"Estimated number of noise points:  {n_noise_}")
+
+    if limit is not None:
+        if n_clusters_ > limit:
+            log(f"Limiting number of clusters to {limit}")
+            n_clusters_ = limit
+    rois = []
+
+    for cluster in range(0, n_clusters_):
+        centrois = centroids[dblabels == cluster]
+        if max_size is not None and len(centrois) > max_size:
+            continue
+
+
+        in_labels = []
+
+        for centoid in centrois:
+            label_at_centroid = x[int(centoid[0]), int(centoid[1])]
+            if label_at_centroid != 0:
+                in_labels.append(label_at_centroid)
+
+        if len(in_labels) == 0:
+            continue
+
+
+        mask = np.isin(x, in_labels)
+        y_coords, x_coords = np.where(mask)
+
+        y1 = np.min(y_coords)
+        x1 = np.min(x_coords)
+        y2 = np.max(y_coords)
+        x2 = np.max(x_coords)
+
+
+        roi = create_roi(
+            rep,
+            vectors=[
+                InputVector(x=x1, y=y1, z=z, t=t, c=c),
+                InputVector(x=x2, y=y1, z=z, t=t, c=c),
+                InputVector(x=x2, y=y2, z=z, t=t, c=c),
+                InputVector(x=x1, y=y2, z=z, t=t, c=c),
+            ],
+            type=RoiTypeInput.RECTANGLE,
+            label="size: {}".format(len(centrois)),
+        )
+        rois.append(roi)
+
+    return rois

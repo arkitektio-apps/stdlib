@@ -3,3 +3,4 @@ colorthief
 xarray-multiscale
 matplotlib
 scikit-image
+scikit-learn

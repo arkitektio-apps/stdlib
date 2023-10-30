@@ -19,6 +19,7 @@ COPY init.py /tmp
 WORKDIR /tmp
 RUN python init.py
 
+RUN pip install "scikit-learn"
 RUN pip install "arkitekt[all]==0.5.58"
 
 

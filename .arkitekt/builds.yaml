@@ -619,8 +619,7 @@ builds:
     scopes:
     - read
     version: 0.3.9
-latest_build:
-  build_id: 331b8b05-fd77-49a4-81bc-76b693fe1716
+- build_id: 3bd133bb-8e8c-449a-8195-b375958ff7b5
   builder: arkitekt.builders.port
   manifest:
     author: jhnnsrs
@@ -629,4 +628,35 @@ latest_build:
     requirements: []
     scopes:
     - read
-    version: 0.3.9
+    version: 0.3.10
+- build_id: 34526bfb-e28a-473d-9eed-9316f1356adf
+  builder: arkitekt.builders.port
+  manifest:
+    author: jhnnsrs
+    entrypoint: app
+    identifier: stdlib
+    requirements: []
+    scopes:
+    - read
+    version: 0.3.10
+- build_id: 2cb1ee3b-fb57-49e8-bff1-227ac52012ea
+  builder: arkitekt.builders.port
+  manifest:
+    author: jhnnsrs
+    entrypoint: app
+    identifier: stdlib
+    requirements: []
+    scopes:
+    - read
+    version: 0.3.10
+latest_build:
+  build_id: 2cb1ee3b-fb57-49e8-bff1-227ac52012ea
+  builder: arkitekt.builders.port
+  manifest:
+    author: jhnnsrs
+    entrypoint: app
+    identifier: stdlib
+    requirements: []
+    scopes:
+    - read
+    version: 0.3.10
