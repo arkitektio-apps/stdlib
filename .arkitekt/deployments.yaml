@@ -1,32 +1,1678 @@
 deployments:
-- build_id: 331b8b05-fd77-49a4-81bc-76b693fe1716
-  builder: arkitekt.builders.port
-  definitions: []
-  deployed_at: '2023-10-26T17:10:32.219728'
-  deployment_id: 72aba11e-ec41-4650-ae13-9266b1a9bd65
-  image: jhnnsrs/stdlib:0.3.9
+- build_id: 095a813d-3021-4273-adc8-74762cd5c6c8
+  deployed_at: '2024-02-17T11:33:32.762383'
+  deployment_id: a9151cda-0e96-4861-a3a9-d683c60ba3d8
+  deployment_run: 70866482-f54a-436f-9455-0173708f2b82
+  flavour: vanilla
+  image: jhnnsrs/stdlib:0.3.10-vanilla
+  inspection:
+    definitions:
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The to be converted Image
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        default: true
+        description: SHould we rescale the image to fit its dynamic range?. Defaults
+          to True.
+        key: rescale
+        kind: BOOL
+        label: rescale
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: true
+        description: Automatically z-project if stack. Defaults to True.
+        key: max
+        kind: BOOL
+        label: max
+        nullable: true
+        scope: GLOBAL
+      - assignWidget:
+          choices:
+          - description: An enumeration.
+            label: VIRIDIS
+            value: VIRIDIS
+          - description: An enumeration.
+            label: PLASMA
+            value: PLASMA
+          kind: ChoiceWidget
+        default: VIRIDIS
+        description: '(Colormap, optional): The colormap to use. Defaults to Colormap.VIRIDIS.'
+        identifier: app.colormap
+        key: cm
+        kind: STRUCTURE
+        label: cm
+        nullable: true
+        returnWidget:
+          choices:
+          - description: An enumeration.
+            label: VIRIDIS
+            value: VIRIDIS
+          - description: An enumeration.
+            label: PLASMA
+            value: PLASMA
+          kind: ChoiceReturnWidget
+        scope: GLOBAL
+      collections:
+      - conversion
+      - rendering
+      description: Generates Thumbnail for the Image
+      interfaces: []
+      kind: FUNCTION
+      name: Thumbnail Image
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_thumbnails($search: String, $values: [ID]) {\n  options:\
+            \ thumbnails(name: $search, limit: 20, ids: $values) {\n    value: id\n\
+            \    label: image\n  }\n}"
+          ward: mikro
+        description: The Thumbnail
+        identifier: '@mikro/thumbnail'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The image
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        default: max
+        description: The key to use for the metric. Defaults to "max".
+        key: key
+        kind: STRING
+        label: key
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - quantitative
+      description: Measures the maxium value of an image
+      interfaces: []
+      kind: FUNCTION
+      name: Measure Max
+      portGroups: []
+      returns:
+      - description: The Back
+        identifier: '@mikro/metric'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - annotations: []
+        default: max
+        key: name
+        kind: STRING
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - creation
+      description: Creates an era with the current time as a starttime
+      interfaces: []
+      kind: FUNCTION
+      name: Create Era Now
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query SearchEras($search: String, $values: [ID]) {\n  options: eras(name:\
+            \ $search, limit: 30, ids: $values) {\n    value: id\n    label: name\n\
+            \  }\n}"
+          ward: mikro
+        description: The Back
+        identifier: '@mikro/era'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_datasets($search: String, $values: [ID]) {\n  options:\
+            \ datasets(name: $search, limit: 30, ids: $values) {\n    value: id\n\
+            \    label: name\n  }\n}"
+          ward: mikro
+        identifier: '@mikro/dataset'
+        key: dataset
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+      collections:
+      - collection
+      description: Iterate over all images in a dataset
+      interfaces: []
+      kind: GENERATOR
+      name: Iterate Images
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The image
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        default: Sum
+        description: The key to use for the metric. Defaults to "max".
+        key: key
+        kind: STRING
+        label: key
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - quantitative
+      description: Measures the sum of all values of an image
+      interfaces: []
+      kind: FUNCTION
+      name: Measure Sum
+      portGroups: []
+      returns:
+      - description: The Back
+        identifier: '@mikro/metric'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The image
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        default: Fraction
+        description: The key to use for the metric. Defaults to "max".
+        key: key
+        kind: STRING
+        label: key
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: 1
+        key: value
+        kind: INT
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - quantitative
+      description: Measures the appearance of this value in the image (0-1)
+      interfaces: []
+      kind: FUNCTION
+      name: Measure Fraction
+      portGroups: []
+      returns:
+      - description: The Back
+        identifier: '@mikro/metric'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The image
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      collections:
+      - quantitative
+      description: Measures basic meffffftrics of an image like max, mifffffn, mean
+      interfaces: []
+      kind: FUNCTION
+      name: Measure Basic Metrics
+      portGroups: []
+      returns:
+      - annotations: []
+        child:
+          identifier: '@mikro/metric'
+          kind: STRUCTURE
+          nullable: false
+          scope: GLOBAL
+        description: The Back
+        key: return0
+        kind: LIST
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Representation
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        default: 1
+        key: interval
+        kind: INT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: frame
+        key: key
+        kind: STRING
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - conversion
+      description: Converts a time series to a single frame
+      interfaces: []
+      kind: GENERATOR
+      name: T to Frame
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_rois($search: String, $values: [ID], $representation:\
+            \ ID) {\n  options: rois(repname: $search, ids: $values, representation:\
+            \ $representation) {\n    label: id\n    value: id\n  }\n}"
+          ward: mikro
+        description: The new Representation
+        identifier: '@mikro/roi'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Representation
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        default: 1
+        key: interval
+        kind: INT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: Slice
+        key: key
+        kind: STRING
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - conversion
+      description: Creates a slice roi for each z slice
+      interfaces: []
+      kind: GENERATOR
+      name: Z to Slice
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_rois($search: String, $values: [ID], $representation:\
+            \ ID) {\n  options: rois(repname: $search, ids: $values, representation:\
+            \ $representation) {\n    label: id\n    value: id\n  }\n}"
+          ward: mikro
+        description: The new Representation
+        identifier: '@mikro/roi'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_rois($search: String, $values: [ID], $representation:\
+            \ ID) {\n  options: rois(repname: $search, ids: $values, representation:\
+            \ $representation) {\n    label: id\n    value: id\n  }\n}"
+          ward: mikro
+        description: The Omero File
+        identifier: '@mikro/roi'
+        key: roi
+        kind: STRUCTURE
+        label: roi
+        nullable: false
+        scope: GLOBAL
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Representation to be cropped. Defaults to the one of the
+          ROI.
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - conversion
+      - cropping
+      description: Crops an Image based on a ROI
+      interfaces: []
+      kind: FUNCTION
+      name: Crop Image
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Back
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Image where we should count cells
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        default: 2
+        key: factor
+        kind: INT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: 0
+        key: depth
+        kind: INT
+        nullable: true
+        scope: GLOBAL
+      - assignWidget:
+          choices:
+          - description: An enumeration.
+            label: MEAN
+            value: MEAN
+          - description: An enumeration.
+            label: MAX
+            value: MAX
+          - description: An enumeration.
+            label: MIN
+            value: MIN
+          - description: An enumeration.
+            label: MEDIAN
+            value: MEDIAN
+          kind: ChoiceWidget
+        default: MEAN
+        identifier: app.downscalemethod
+        key: method
+        kind: STRUCTURE
+        nullable: true
+        returnWidget:
+          choices:
+          - description: An enumeration.
+            label: MEAN
+            value: MEAN
+          - description: An enumeration.
+            label: MAX
+            value: MAX
+          - description: An enumeration.
+            label: MIN
+            value: MIN
+          - description: An enumeration.
+            label: MEDIAN
+            value: MEDIAN
+          kind: ChoiceReturnWidget
+        scope: GLOBAL
+      collections:
+      - processing
+      - scaling
+      description: Scales down the Representatoi by the factor of the provided
+      interfaces: []
+      kind: FUNCTION
+      name: Downscale
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Downscaled image
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Image we should rescale
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        default: 2.0
+        key: factor_x
+        kind: FLOAT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: 2.0
+        key: factor_y
+        kind: FLOAT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: 2.0
+        key: factor_z
+        kind: FLOAT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: 1.0
+        key: factor_t
+        kind: FLOAT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: 1.0
+        key: factor_c
+        kind: FLOAT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: true
+        key: anti_alias
+        kind: BOOL
+        nullable: true
+        scope: GLOBAL
+      - assignWidget:
+          choices:
+          - description: An enumeration.
+            label: MEAN
+            value: MEAN
+          - description: An enumeration.
+            label: MAX
+            value: MAX
+          - description: An enumeration.
+            label: MIN
+            value: MIN
+          - description: An enumeration.
+            label: MEDIAN
+            value: MEDIAN
+          kind: ChoiceWidget
+        default: MEAN
+        identifier: app.downscalemethod
+        key: method
+        kind: STRUCTURE
+        nullable: true
+        returnWidget:
+          choices:
+          - description: An enumeration.
+            label: MEAN
+            value: MEAN
+          - description: An enumeration.
+            label: MAX
+            value: MAX
+          - description: An enumeration.
+            label: MIN
+            value: MIN
+          - description: An enumeration.
+            label: MEDIAN
+            value: MEDIAN
+          kind: ChoiceReturnWidget
+        scope: GLOBAL
+      collections:
+      - processing
+      - scaling
+      description: Rescale the dimensions by the factors provided
+      interfaces: []
+      kind: FUNCTION
+      name: Rescale
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Rescaled image
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Image we should resized
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        key: dim_x
+        kind: INT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        key: dim_y
+        kind: INT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        key: dim_z
+        kind: INT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        key: dim_t
+        kind: INT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        key: dim_c
+        kind: INT
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: true
+        key: anti_alias
+        kind: BOOL
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - processing
+      - scaling
+      description: Resize the image to the dimensions provided
+      interfaces: []
+      kind: FUNCTION
+      name: Resize
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The resized image
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Image we should resized
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        description: The physical size of the x dimension
+        key: rescale_x
+        kind: FLOAT
+        label: rescale_x
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        description: The physical size of the y dimension
+        key: rescale_y
+        kind: FLOAT
+        label: rescale_y
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        description: The physical size of the z dimension
+        key: rescale_z
+        kind: FLOAT
+        label: rescale_z
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        description: The size of the x dimension
+        groups:
+        - advanced
+        key: ensure_dim_x
+        kind: INT
+        label: ensure_dim_x
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        description: The size of the y dimension
+        groups:
+        - advanced
+        key: ensure_dim_y
+        kind: INT
+        label: ensure_dim_y
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        description: The size of the z dimension
+        groups:
+        - advanced
+        key: ensure_dim_z
+        kind: INT
+        label: ensure_dim_z
+        nullable: true
+        scope: GLOBAL
+      - assignWidget:
+          choices:
+          - description: An enumeration.
+            label: CENTER
+            value: CENTER
+          - description: An enumeration.
+            label: TOP_LEFT
+            value: TOP_LEFT
+          - description: An enumeration.
+            label: BOTTOM_RIGHT
+            value: BOTTOM_RIGHT
+          kind: ChoiceWidget
+        default: CENTER
+        description: The method to crop the image. Defaults to crop center.
+        groups:
+        - advanced
+        identifier: app.cropmethod
+        key: crop_method
+        kind: STRUCTURE
+        label: crop_method
+        nullable: true
+        returnWidget:
+          choices:
+          - description: An enumeration.
+            label: CENTER
+            value: CENTER
+          - description: An enumeration.
+            label: TOP_LEFT
+            value: TOP_LEFT
+          - description: An enumeration.
+            label: BOTTOM_RIGHT
+            value: BOTTOM_RIGHT
+          kind: ChoiceReturnWidget
+        scope: GLOBAL
+      - assignWidget:
+          choices:
+          - description: An enumeration.
+            label: PAD_ZEROS
+            value: PAD_ZEROS
+          kind: ChoiceWidget
+        default: PAD_ZEROS
+        description: The method to pad the image. Defaults to expand with zeros.
+        groups:
+        - advanced
+        identifier: app.expandmethod
+        key: pad_method
+        kind: STRUCTURE
+        label: pad_method
+        nullable: true
+        returnWidget:
+          choices:
+          - description: An enumeration.
+            label: PAD_ZEROS
+            value: PAD_ZEROS
+          kind: ChoiceReturnWidget
+        scope: GLOBAL
+      - annotations: []
+        default: true
+        groups:
+        - advanced
+        key: anti_alias
+        kind: BOOL
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - processing
+      - scaling
+      description: 'Resize the image to match the physical size of the dimensions,
+
+        if the physical size is not provided, it will be assumed to be 1.
+
+
+        Additional dimensions will be cropped or padded according to the
+
+        crop_method and pad_method if the ensure_dim is provided'
+      interfaces: []
+      kind: FUNCTION
+      name: Resize to Physical
+      portGroups:
+      - hidden: true
+        key: advanced
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The resized image
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Image where we should count cells
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        default: 0.5
+        key: threshold
+        kind: FLOAT
+        nullable: true
+        scope: GLOBAL
+      - assignWidget:
+          choices:
+          - description: An enumeration.
+            label: MEAN
+            value: MEAN
+          - description: An enumeration.
+            label: MAX
+            value: MAX
+          - description: An enumeration.
+            label: MIN
+            value: MIN
+          kind: ChoiceWidget
+        default: MEAN
+        identifier: app.thresholdmethod
+        key: method
+        kind: STRUCTURE
+        nullable: true
+        returnWidget:
+          choices:
+          - description: An enumeration.
+            label: MEAN
+            value: MEAN
+          - description: An enumeration.
+            label: MAX
+            value: MAX
+          - description: An enumeration.
+            label: MIN
+            value: MIN
+          kind: ChoiceReturnWidget
+        scope: GLOBAL
+      collections:
+      - processing
+      - thresholding
+      description: Binarizes the image based on a threshold
+      interfaces: []
+      kind: FUNCTION
+      name: Binarize
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Downscaled image
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Image where we should count cells
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      collections:
+      - processing
+      - projection
+      description: Projects the image onto the maximum intensity along the z axis
+      interfaces: []
+      kind: FUNCTION
+      name: Maximum Intensity Projection
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Downscaled image
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Image where we should count cells
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - assignWidget:
+          choices:
+          - description: An enumeration.
+            label: NORM_INF
+            value: NORM_INF
+          - description: An enumeration.
+            label: NORM_L1
+            value: NORM_L1
+          - description: An enumeration.
+            label: NORM_L2
+            value: NORM_L2
+          - description: An enumeration.
+            label: NORM_MINMAX
+            value: NORM_MINMAX
+          - description: An enumeration.
+            label: NORM_RELATIVE
+            value: NORM_RELATIVE
+          - description: An enumeration.
+            label: NORM_TYPE_MASK
+            value: NORM_TYPE_MASK
+          kind: ChoiceWidget
+        default: NORM_MINMAX
+        identifier: app.cv2normtypes
+        key: normtype
+        kind: STRUCTURE
+        nullable: true
+        returnWidget:
+          choices:
+          - description: An enumeration.
+            label: NORM_INF
+            value: NORM_INF
+          - description: An enumeration.
+            label: NORM_L1
+            value: NORM_L1
+          - description: An enumeration.
+            label: NORM_L2
+            value: NORM_L2
+          - description: An enumeration.
+            label: NORM_MINMAX
+            value: NORM_MINMAX
+          - description: An enumeration.
+            label: NORM_RELATIVE
+            value: NORM_RELATIVE
+          - description: An enumeration.
+            label: NORM_TYPE_MASK
+            value: NORM_TYPE_MASK
+          kind: ChoiceReturnWidget
+        scope: GLOBAL
+      collections:
+      - processing
+      - thresholding
+      - adaptive
+      description: Binarizes the image based on a threshold
+      interfaces: []
+      kind: FUNCTION
+      name: Adaptive Binarize
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Downscaled image
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Image to be thresholded
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        default: false
+        description: Whether to apply a gaussian blur before thresholding (kernel_size=5)
+        key: gaussian_blur
+        kind: BOOL
+        label: gaussian_blur
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - processing
+      - thresholding
+      - adaptive
+      description: 'Binarizes the image based on a threshold, using Otsu''s method
+
+        with option to guassian blur the image before, images are normalized
+
+        for each x,y slice before thresholding.'
+      interfaces: []
+      kind: FUNCTION
+      name: Otsu Thresholding
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The thresholded image
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_rois($search: String, $values: [ID], $representation:\
+            \ ID) {\n  options: rois(repname: $search, ids: $values, representation:\
+            \ $representation) {\n    label: id\n    value: id\n  }\n}"
+          ward: mikro
+        identifier: '@mikro/roi'
+        key: roi
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+      collections:
+      - conversion
+      description: Transforms a ROI into a Position on the governing stage
+      interfaces: []
+      kind: FUNCTION
+      name: Roi to Position
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_positions($search: String, $values: [ID], $stage: ID)\
+            \ {\n  options: positions(name: $search, limit: 30, stage: $stage, ids:\
+            \ $values) {\n    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The Downscaled image
+        identifier: '@mikro/position'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_rois($search: String, $values: [ID], $representation:\
+            \ ID) {\n  options: rois(repname: $search, ids: $values, representation:\
+            \ $representation) {\n    label: id\n    value: id\n  }\n}"
+          ward: mikro
+        description: The roi to measure
+        identifier: '@mikro/roi'
+        key: roi
+        kind: STRUCTURE
+        label: roi
+        nullable: false
+        scope: GLOBAL
+      collections:
+      - conversion
+      description: 'Measures the size of a Rectangular Roi in microns
+
+        (only works for Rectangular ROIS)'
+      interfaces: []
+      kind: FUNCTION
+      name: Rectangular Roi to Dimensions
+      portGroups: []
+      returns:
+      - annotations: []
+        description: The height of the ROI in microns
+        key: return0
+        kind: FLOAT
+        label: height
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        description: The width of the ROI in microns
+        key: return1
+        kind: FLOAT
+        label: width
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - annotations: []
+        child:
+          assignWidget:
+            kind: SearchWidget
+            query: "query search_rois($search: String, $values: [ID], $representation:\
+              \ ID) {\n  options: rois(repname: $search, ids: $values, representation:\
+              \ $representation) {\n    label: id\n    value: id\n  }\n}"
+            ward: mikro
+          identifier: '@mikro/roi'
+          kind: STRUCTURE
+          nullable: false
+          scope: GLOBAL
+        key: roi
+        kind: LIST
+        nullable: false
+        scope: GLOBAL
+      collections:
+      - conversion
+      description: Transforms a List of Rois into a List of Positions on the governing
+        stage
+      interfaces: []
+      kind: FUNCTION
+      name: Rois to Positions
+      portGroups: []
+      returns:
+      - annotations: []
+        child:
+          assignWidget:
+            kind: SearchWidget
+            query: "query search_positions($search: String, $values: [ID], $stage:\
+              \ ID) {\n  options: positions(name: $search, limit: 30, stage: $stage,\
+              \ ids: $values) {\n    value: id\n    label: name\n  }\n}"
+            ward: mikro
+          identifier: '@mikro/position'
+          kind: STRUCTURE
+          nullable: false
+          scope: GLOBAL
+        description: The Downscaled image
+        key: return0
+        kind: LIST
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - annotations: []
+        key: name
+        kind: STRING
+        nullable: false
+        scope: GLOBAL
+      collections:
+      - creation
+      description: Creates a new stage with the given name
+      interfaces: []
+      kind: FUNCTION
+      name: Create New Stage
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_stages($search: String, $values: [ID]) {\n  options:\
+            \ stages(name: $search, limit: 30, ids: $values) {\n    value: id\n  \
+            \  label: name\n  }\n}"
+          ward: mikro
+        identifier: '@mikro/stage'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - annotations: []
+        child:
+          assignWidget:
+            kind: SearchWidget
+            query: "query search_positions($search: String, $values: [ID], $stage:\
+              \ ID) {\n  options: positions(name: $search, limit: 30, stage: $stage,\
+              \ ids: $values) {\n    value: id\n    label: name\n  }\n}"
+            ward: mikro
+          identifier: '@mikro/position'
+          kind: STRUCTURE
+          nullable: false
+          scope: GLOBAL
+        key: name
+        kind: LIST
+        nullable: false
+        scope: GLOBAL
+      collections:
+      - conversion
+      description: Creates a new stage with the given name
+      interfaces: []
+      kind: FUNCTION
+      name: Merge positions to stage
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_stages($search: String, $values: [ID]) {\n  options:\
+            \ stages(name: $search, limit: 30, ids: $values) {\n    value: id\n  \
+            \  label: name\n  }\n}"
+          ward: mikro
+        identifier: '@mikro/stage'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_datasets($search: String, $values: [ID]) {\n  options:\
+            \ datasets(name: $search, limit: 30, ids: $values) {\n    value: id\n\
+            \    label: name\n  }\n}"
+          ward: mikro
+        identifier: '@mikro/dataset'
+        key: dataset
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+      collections:
+      - collection
+      description: Gets the files in an dataset at the time of the request
+      interfaces: []
+      kind: FUNCTION
+      name: Get all Omerfiles in Dataset
+      portGroups: []
+      returns:
+      - annotations: []
+        child:
+          assignWidget:
+            kind: SearchWidget
+            query: "query search_omerofile($search: String, $values: [ID]) {\n  options:\
+              \ omerofiles(name: $search, ids: $values) {\n    value: id\n    label:\
+              \ name\n  }\n}"
+            ward: mikro
+          identifier: '@mikro/omerofile'
+          kind: STRUCTURE
+          nullable: false
+          scope: GLOBAL
+        key: return0
+        kind: LIST
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          choices:
+          - description: An enumeration.
+            label: ASTRONAUT
+            value: ASTRONAUT
+          - description: An enumeration.
+            label: BRAIN
+            value: BRAIN
+          - description: An enumeration.
+            label: BRICK
+            value: BRICK
+          - description: An enumeration.
+            label: CAMERA
+            value: CAMERA
+          - description: An enumeration.
+            label: CAT
+            value: CAT
+          - description: An enumeration.
+            label: CELL
+            value: CELL
+          - description: An enumeration.
+            label: CELLS_3D
+            value: CELLS_3D
+          - description: An enumeration.
+            label: CHECKERBOARD
+            value: CHECKERBOARD
+          - description: An enumeration.
+            label: CHELSEA
+            value: CHELSEA
+          - description: An enumeration.
+            label: CLOCK
+            value: CLOCK
+          - description: An enumeration.
+            label: COFFEE
+            value: COFFEE
+          - description: An enumeration.
+            label: COINS
+            value: COINS
+          - description: An enumeration.
+            label: COLORWHEEL
+            value: COLORWHEEL
+          - description: An enumeration.
+            label: EAGLE
+            value: EAGLE
+          - description: An enumeration.
+            label: GRASS
+            value: GRASS
+          - description: An enumeration.
+            label: GRAVEL
+            value: GRAVEL
+          - description: An enumeration.
+            label: HORSE
+            value: HORSE
+          - description: An enumeration.
+            label: HUBBLE_DEEP_FIELD
+            value: HUBBLE_DEEP_FIELD
+          - description: An enumeration.
+            label: HUMAN_MITOSIS
+            value: HUMAN_MITOSIS
+          - description: An enumeration.
+            label: IMMUNOHISTOCHEMISTRY
+            value: IMMUNOHISTOCHEMISTRY
+          - description: An enumeration.
+            label: KIDNEY
+            value: KIDNEY
+          - description: An enumeration.
+            label: LILY
+            value: LILY
+          - description: An enumeration.
+            label: LOGO
+            value: LOGO
+          - description: An enumeration.
+            label: MICROANEURYSMS
+            value: MICROANEURYSMS
+          - description: An enumeration.
+            label: MOON
+            value: MOON
+          - description: An enumeration.
+            label: NICKEL_SOLIDIFICATION
+            value: NICKEL_SOLIDIFICATION
+          - description: An enumeration.
+            label: PAGE
+            value: PAGE
+          - description: An enumeration.
+            label: PROTEIN_TRANSPORT
+            value: PROTEIN_TRANSPORT
+          - description: An enumeration.
+            label: RETINA
+            value: RETINA
+          - description: An enumeration.
+            label: ROCKET
+            value: ROCKET
+          - description: An enumeration.
+            label: SHEPP_LOGAN_PHANTOM
+            value: SHEPP_LOGAN_PHANTOM
+          - description: An enumeration.
+            label: SKIN
+            value: SKIN
+          - description: An enumeration.
+            label: TEXT
+            value: TEXT
+          - description: An enumeration.
+            label: VORTEX
+            value: VORTEX
+          kind: ChoiceWidget
+        identifier: app.datakind
+        key: kind
+        kind: STRUCTURE
+        nullable: false
+        returnWidget:
+          choices:
+          - description: An enumeration.
+            label: ASTRONAUT
+            value: ASTRONAUT
+          - description: An enumeration.
+            label: BRAIN
+            value: BRAIN
+          - description: An enumeration.
+            label: BRICK
+            value: BRICK
+          - description: An enumeration.
+            label: CAMERA
+            value: CAMERA
+          - description: An enumeration.
+            label: CAT
+            value: CAT
+          - description: An enumeration.
+            label: CELL
+            value: CELL
+          - description: An enumeration.
+            label: CELLS_3D
+            value: CELLS_3D
+          - description: An enumeration.
+            label: CHECKERBOARD
+            value: CHECKERBOARD
+          - description: An enumeration.
+            label: CHELSEA
+            value: CHELSEA
+          - description: An enumeration.
+            label: CLOCK
+            value: CLOCK
+          - description: An enumeration.
+            label: COFFEE
+            value: COFFEE
+          - description: An enumeration.
+            label: COINS
+            value: COINS
+          - description: An enumeration.
+            label: COLORWHEEL
+            value: COLORWHEEL
+          - description: An enumeration.
+            label: EAGLE
+            value: EAGLE
+          - description: An enumeration.
+            label: GRASS
+            value: GRASS
+          - description: An enumeration.
+            label: GRAVEL
+            value: GRAVEL
+          - description: An enumeration.
+            label: HORSE
+            value: HORSE
+          - description: An enumeration.
+            label: HUBBLE_DEEP_FIELD
+            value: HUBBLE_DEEP_FIELD
+          - description: An enumeration.
+            label: HUMAN_MITOSIS
+            value: HUMAN_MITOSIS
+          - description: An enumeration.
+            label: IMMUNOHISTOCHEMISTRY
+            value: IMMUNOHISTOCHEMISTRY
+          - description: An enumeration.
+            label: KIDNEY
+            value: KIDNEY
+          - description: An enumeration.
+            label: LILY
+            value: LILY
+          - description: An enumeration.
+            label: LOGO
+            value: LOGO
+          - description: An enumeration.
+            label: MICROANEURYSMS
+            value: MICROANEURYSMS
+          - description: An enumeration.
+            label: MOON
+            value: MOON
+          - description: An enumeration.
+            label: NICKEL_SOLIDIFICATION
+            value: NICKEL_SOLIDIFICATION
+          - description: An enumeration.
+            label: PAGE
+            value: PAGE
+          - description: An enumeration.
+            label: PROTEIN_TRANSPORT
+            value: PROTEIN_TRANSPORT
+          - description: An enumeration.
+            label: RETINA
+            value: RETINA
+          - description: An enumeration.
+            label: ROCKET
+            value: ROCKET
+          - description: An enumeration.
+            label: SHEPP_LOGAN_PHANTOM
+            value: SHEPP_LOGAN_PHANTOM
+          - description: An enumeration.
+            label: SKIN
+            value: SKIN
+          - description: An enumeration.
+            label: TEXT
+            value: TEXT
+          - description: An enumeration.
+            label: VORTEX
+            value: VORTEX
+          kind: ChoiceReturnWidget
+        scope: GLOBAL
+      - annotations: []
+        default: true
+        key: attach_meta
+        kind: BOOL
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - generator
+      description: No Description
+      interfaces: []
+      kind: FUNCTION
+      name: Generate Test Image
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        identifier: '@mikro/representation'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_representation($search: String, $values: [ID]) {\n\
+            \  options: representations(name: $search, limit: 20, ids: $values) {\n\
+            \    value: id\n    label: name\n  }\n}"
+          ward: mikro
+        description: The image to label outliers for
+        identifier: '@mikro/representation'
+        key: rep
+        kind: STRUCTURE
+        label: rep
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        description: The distance between points in a cluster (eps in DBSCAN)
+        key: distance
+        kind: FLOAT
+        label: distance
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        description: The minimum size of a cluster (min_samples in DBSCAN)
+        key: min_size
+        kind: INT
+        label: min_size
+        nullable: false
+        scope: GLOBAL
+      - annotations: []
+        description: The maximum size of a cluster (threshold for number of labels
+          in a cluster)
+        key: max_size
+        kind: INT
+        label: max_size
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: 0
+        description: The channel to use. Defaults to 0.
+        key: c
+        kind: INT
+        label: c
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: 0
+        description: The timepoint to use. Defaults to 0.
+        key: t
+        kind: INT
+        label: t
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        default: 0
+        description: The z-slice to use. Defaults to 0.
+        key: z
+        kind: INT
+        label: z
+        nullable: true
+        scope: GLOBAL
+      - annotations: []
+        description: The maximum number of clusters to return. Defaults to None.
+        key: limit
+        kind: INT
+        label: limit
+        nullable: true
+        scope: GLOBAL
+      collections:
+      - segmentation
+      description: "Takes a masked image and marks rois based on dense clusters of\
+        \ a certain size \nand density of their center of mass"
+      interfaces: []
+      kind: FUNCTION
+      name: Mark Clusters
+      portGroups: []
+      returns:
+      - annotations: []
+        child:
+          assignWidget:
+            kind: SearchWidget
+            query: "query search_rois($search: String, $values: [ID], $representation:\
+              \ ID) {\n  options: rois(repname: $search, ids: $values, representation:\
+              \ $representation) {\n    label: id\n    value: id\n  }\n}"
+            ward: mikro
+          identifier: '@mikro/roi'
+          kind: STRUCTURE
+          nullable: false
+          scope: GLOBAL
+        description: The rois for the clusters
+        key: return0
+        kind: LIST
+        nullable: false
+        scope: GLOBAL
+    - args:
+      - annotations: []
+        child:
+          assignWidget:
+            kind: SearchWidget
+            query: "query search_tables($search: String, $values: [ID]) {\n  options:\
+              \ tables(name: $search, limit: 30, ids: $values) {\n    value: id\n\
+              \    label: name\n  }\n}"
+            ward: mikro
+          identifier: '@mikro/table'
+          kind: STRUCTURE
+          nullable: false
+          scope: GLOBAL
+        description: The tables to merge
+        key: table
+        kind: LIST
+        label: table
+        nullable: false
+        scope: GLOBAL
+      collections:
+      - organization
+      description: Merges a list of tables into a single table
+      interfaces: []
+      kind: FUNCTION
+      name: Merge Tables
+      portGroups: []
+      returns:
+      - assignWidget:
+          kind: SearchWidget
+          query: "query search_tables($search: String, $values: [ID]) {\n  options:\
+            \ tables(name: $search, limit: 30, ids: $values) {\n    value: id\n  \
+            \  label: name\n  }\n}"
+          ward: mikro
+        description: The merged table
+        identifier: '@mikro/table'
+        key: return0
+        kind: STRUCTURE
+        nullable: false
+        scope: GLOBAL
+    size: 2416475459
   manifest:
     author: jhnnsrs
-    created_at: '2023-10-26T17:10:13.519743'
-    entrypoint: app
-    identifier: stdlib
-    requirements: []
-    scopes:
-    - read
-    version: 0.3.9
-- build_id: 2cb1ee3b-fb57-49e8-bff1-227ac52012ea
-  builder: arkitekt.builders.port
-  definitions: []
-  deployed_at: '2023-10-30T13:29:43.674877'
-  deployment_id: 0f76c04f-734a-4f28-9155-6a614983def1
-  image: jhnnsrs/stdlib:0.3.10
-  manifest:
-    author: jhnnsrs
-    created_at: '2023-10-30T13:29:28.571642'
+    created_at: '2024-02-17T11:33:22.078454'
     entrypoint: app
     identifier: stdlib
     requirements: []
     scopes:
     - read
     version: 0.3.10
-latest_deployment: '2023-10-30T13:29:43.676131'
+  selectors: []
+latest_deployment_run: 5a9a2925-67b0-4ed0-996e-b658b3224ff7

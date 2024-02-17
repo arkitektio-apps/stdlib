@@ -42,6 +42,8 @@ from mikro.api.schema import (
     InputVector,
     create_era,
     EraFragment,
+    TableFragment,
+    from_df,
 )
 import operator
 from arkitekt import register, log, group
@@ -54,7 +56,7 @@ from skimage import data
 import skimage
 from scipy import ndimage
 from sklearn.cluster import DBSCAN
-
+import pandas as pd
 
 class Colormap(Enum):
     VIRIDIS = partial(cm.viridis)  # partial needed to make it register as an enum value
@@ -1346,3 +1348,36 @@ def mark_clusters_of_size_rectangle(
         rois.append(roi)
 
     return rois
+
+
+
+
+@register(collections=["organization"])
+def merge_tables(table: List[TableFragment]) -> TableFragment:
+    """Merge Tables
+
+    Merges a list of tables into a single table
+
+    Args:
+        table (List[TableFragment]): The tables to merge
+
+    Returns:
+        TableFragment: The merged table
+    """
+    rep_origins = []
+    for t in table:
+        for o in t.rep_origins:
+            rep_origins.append(o)
+
+    frames = []
+
+    for t in table:
+        same = t.data
+        same["origin"] = t.id
+        frames.append(same)
+
+
+    new_dataframe = pd.concat(frames, ignore_index=True)
+
+    return from_df(new_dataframe, name="Merged Table", rep_origins=rep_origins)
+
